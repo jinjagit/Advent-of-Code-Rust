@@ -3,57 +3,117 @@
 
 // Note: The above algo. would give fuel requirement of -1 for a mass of 3!
 
-use std::io::{stdin, stdout, Write};
-
 fn main() {
-    loop {
-        let mut mass: u32 = 0;
+    let module_mass_list = vec![
+        106985,
+        113927,
+        107457,
+        106171,
+        69124,
+        59906,
+        66420,
+        149336,
+        73783,
+        120127,
+        139486,
+        108698,
+        104091,
+        103032,
+        108609,
+        136293,
+        144735,
+        55381,
+        98823,
+        103981,
+        140684,
+        114482,
+        133925,
+        111247,
+        110833,
+        92252,
+        87396,
+        79730,
+        61395,
+        82572,
+        72403,
+        140763,
+        57088,
+        63457,
+        65523,
+        50148,
+        134758,
+        93447,
+        85513,
+        132927,
+        139159,
+        141579,
+        94444,
+        56997,
+        137128,
+        107930,
+        67607,
+        108837,
+        120206,
+        79441,
+        99839,
+        137404,
+        140502,
+        67274,
+        108736,
+        97302,
+        76561,
+        107804,
+        134306,
+        52820,
+        89632,
+        101473,
+        65001,
+        57399,
+        82858,
+        60577,
+        82043,
+        144783,
+        101606,
+        138900,
+        68246,
+        118774,
+        129919,
+        99394,
+        80009,
+        107404,
+        121503,
+        119232,
+        108157,
+        117965,
+        112025,
+        139205,
+        126336,
+        143985,
+        58894,
+        93020,
+        136732,
+        100535,
+        144090,
+        134414,
+        109049,
+        105714,
+        111654,
+        50677,
+        77622,
+        53398,
+        133851,
+        71166,
+        115935,
+        94067
+    ];
 
-        while mass == 0 {
-            print!("Module mass? (Enter a positive integer):");
+    let mut total_fuel: u32 = 0;
 
-            let input = get_input();
-            mass = string_to_non_zero_u32(input);
-        }
-
-        println!("fuel required: {}\n", calculate_fuel(mass));
+    for mass in module_mass_list {
+        total_fuel += calculate_fuel(mass);
     }
-}
 
-fn get_input() -> String {
-    let mut s = String::new();
-
-    let _ = stdout().flush();
-
-    stdin()
-        .read_line(&mut s)
-        .expect("Did not enter a correct string");
-
-    let char = s.chars().next_back();
-    if char == Some('\r') || char == Some('\n') {
-        s.pop();
-    }
-
-    s
-}
-
-fn string_to_non_zero_u32(s: String) -> u32 {
-    let i = match s.parse::<u32>() {
-        Ok(i) => {
-            if i != 0 {
-                i
-            } else {
-                println!("\nERROR! Mass cannot be zero. Try again");
-                0
-            }
-        }
-        Err(_) => {
-            println!("\nERROR! Try again");
-            0
-        }
-    };
-
-    i
+    println!("Total fuel required: {}\n", total_fuel);
 }
 
 fn calculate_fuel(mass: u32) -> u32 {
@@ -75,21 +135,5 @@ mod tests {
         assert_eq!(fuel, 654);
         let fuel = calculate_fuel(100756);
         assert_eq!(fuel, 33583);
-    }
-
-    #[test]
-    fn string_to_non_zero_u32_test() {
-        let result = string_to_non_zero_u32(String::from("not_an_integer"));
-        assert_eq!(result, 0);
-        let result = string_to_non_zero_u32(String::from(""));
-        assert_eq!(result, 0);
-        let result = string_to_non_zero_u32(String::from("0"));
-        assert_eq!(result, 0);
-        let result = string_to_non_zero_u32(String::from("-7"));
-        assert_eq!(result, 0);
-        let result = string_to_non_zero_u32(String::from("1.14"));
-        assert_eq!(result, 0);
-        let result = string_to_non_zero_u32(String::from("397"));
-        assert_eq!(result, 397);
     }
 }
