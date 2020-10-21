@@ -111,7 +111,10 @@ fn main() {
 
     let mut total_fuel: u32 = 0;
 
-    for (_i, mass) in module_mass_list.iter().enumerate() {
+    // iter() iterates over &T.
+    let iter = module_mass_list.iter();
+
+    for mass in iter {
         total_fuel += calculate_fuel(*mass);
     }
 
