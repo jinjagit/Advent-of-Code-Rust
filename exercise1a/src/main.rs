@@ -4,7 +4,9 @@
 // Note: The above algo. would give fuel requirement of -1 for a mass of 3!
 
 fn main() {
-    let module_mass_list = vec![
+    // Use a fixed-size array, since we know the length and all items are same type.
+    // Vec would be slightly simpler to use, but also slightly slower.
+    let module_mass_list: [u32; 100] = [
         106985,
         113927,
         107457,
@@ -109,8 +111,8 @@ fn main() {
 
     let mut total_fuel: u32 = 0;
 
-    for mass in module_mass_list {
-        total_fuel += calculate_fuel(mass);
+    for (_i, mass) in module_mass_list.iter().enumerate() {
+        total_fuel += calculate_fuel(*mass);
     }
 
     println!("Total fuel required: {}\n", total_fuel);
