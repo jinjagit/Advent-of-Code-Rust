@@ -13,13 +13,13 @@ fn main() {
 
     for i in 0..100 {
         for j in 0..100 {
-            noun = i;
-            verb = j;
-            intcode[1] = noun;
-            intcode[2] = verb;
+            intcode[1] = i;
+            intcode[2] = j;
             let resulting_code = run_all_intcode_blocks(&intcode);
 
             if resulting_code[0] == 19690720 {
+                noun = i;
+                verb = j;
                 result_found = true;
                 break;
             }
