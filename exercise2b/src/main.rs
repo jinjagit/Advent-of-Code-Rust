@@ -38,6 +38,7 @@ fn main() {
 
 fn run_all_intcode_blocks(intcode: &Vec<u32>) -> Vec<u32> {
     let mut counter: usize = 0;
+
     let mut new_intcode = intcode.to_vec();
 
     loop {
@@ -46,8 +47,8 @@ fn run_all_intcode_blocks(intcode: &Vec<u32>) -> Vec<u32> {
         if let Some(99) = &intcode.get(start) {
             break;
         } else if let Some(_value) = &intcode.get(start) {
-            let code_block = &intcode[start..start + 4];
-            new_intcode = run_intcode_block(&new_intcode, code_block);
+            //let code_block = &intcode[start..start + 4];
+            new_intcode = run_intcode_block(&new_intcode, &start);
         } else {
             println!("Error! No exit code '99' encountered");
             break;
@@ -59,15 +60,17 @@ fn run_all_intcode_blocks(intcode: &Vec<u32>) -> Vec<u32> {
     new_intcode
 }
 
-fn run_intcode_block(intcode: &Vec<u32>, code_block: &[u32]) -> Vec<u32> {
+fn run_intcode_block(intcode: &Vec<u32>, start: &usize) -> Vec<u32> {
     let mut new_intcode = intcode.to_vec();
 
-    if code_block[0] == 1 {
-        new_intcode[code_block[3] as usize] =
-            new_intcode[code_block[1] as usize] + new_intcode[code_block[2] as usize];
-    } else if code_block[0] == 2 {
-        new_intcode[code_block[3] as usize] =
-            new_intcode[code_block[1] as usize] * new_intcode[code_block[2] as usize];
+    let noun_index = new_intcode[*start + 1] as usize;
+    let verb_index = new_intcode[*start + 2] as usize;
+    let result_index = new_intcode[*start + 3] as usize;
+
+    if new_intcode[*start] == 1 {
+        new_intcode[result_index] = new_intcode[noun_index] + new_intcode[verb_index];
+    } else if new_intcode[*start] == 2 {
+        new_intcode[result_index] = new_intcode[noun_index] * new_intcode[verb_index];
     }
 
     new_intcode
