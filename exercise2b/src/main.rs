@@ -38,7 +38,6 @@ fn main() {
 
 fn run_all_intcode_blocks(intcode: &Vec<u32>) -> Vec<u32> {
     let mut counter: usize = 0;
-
     let mut new_intcode = intcode.to_vec();
 
     loop {
