@@ -15,9 +15,9 @@ fn main() {
         for j in 0..100 {
             intcode[1] = i;
             intcode[2] = j;
-            let resulting_code = run_all_intcode_blocks(&intcode);
+            let resultant_code = run_all_intcode_blocks(&intcode);
 
-            if resulting_code[0] == 19690720 {
+            if resultant_code[0] == 19690720 {
                 noun = i;
                 verb = j;
                 result_found = true;
