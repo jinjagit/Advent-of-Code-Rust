@@ -47,7 +47,6 @@ fn run_all_intcode_blocks(intcode: &Vec<u32>) -> Vec<u32> {
         if let Some(99) = &intcode.get(start) {
             break;
         } else if let Some(_value) = &intcode.get(start) {
-            //let code_block = &intcode[start..start + 4];
             new_intcode = run_intcode_block(&new_intcode, &start);
         } else {
             println!("Error! No exit code '99' encountered");
