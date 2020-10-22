@@ -1,7 +1,7 @@
 fn main() {
     let intcode = vec![1, 2, 3, 4, 5, 6, 7 , 8];
 
-    run_all_code_blocks(&intcode);
+    run_all_intcode_blocks(&intcode);
 
     println!("intcode in main: {:?}", intcode);
 }
@@ -19,11 +19,19 @@ fn run_intcode_block(intcode: &Vec<u32>, code_block: &[u32]) {
     }
 }
 
-fn run_all_code_blocks(intcode: &Vec<u32>) {
-    let code_block = &intcode[0..4];
-    
-    println!("slice: {:?}", code_block);
-    println!("slice[0]: {:?}", code_block[0]);
+fn run_all_intcode_blocks(intcode: &Vec<u32>) {
+    let mut counter: usize = 0;
 
-    run_intcode_block(intcode, code_block);
+    loop {
+        let start = counter * 4;
+
+        if let Some(_value) = &intcode.get(start) {
+            let code_block = &intcode[start..start + 4];
+            run_intcode_block(intcode, code_block);
+        } else {
+            break;
+        }
+
+        counter += 1;
+    }
 }
