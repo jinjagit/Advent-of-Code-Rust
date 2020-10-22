@@ -115,7 +115,7 @@ fn main() {
     let iter = module_mass_list.iter();
 
     for mass in iter {
-        total_fuel += calculate_fuel(*mass);
+        total_fuel += calculate_total_fuel(*mass);
     }
 
     println!("Total fuel required: {}\n", total_fuel);
@@ -125,6 +125,20 @@ fn calculate_fuel(mass: u32) -> u32 {
     let fuel = ((mass as f32 / 3.0).floor() - 2.0) as u32;
 
     fuel
+}
+
+// Recursion NOT used. This algo. seems a good fit for recursion, but RUST is
+// apparently not really designed for TOC. Thus, recursion is best avoided.
+fn calculate_total_fuel(mass: u32) -> u32 {
+    let mut remaining_mass: u32 = mass;
+    let mut total_fuel: u32 = 0;
+
+    while remaining_mass > 0 {
+        remaining_mass = calculate_fuel(remaining_mass);
+        total_fuel += remaining_mass
+    }
+
+    total_fuel
 }
 
 #[cfg(test)]
@@ -140,5 +154,11 @@ mod tests {
         assert_eq!(fuel, 654);
         let fuel = calculate_fuel(100756);
         assert_eq!(fuel, 33583);
+    }
+
+    #[test]
+    fn calculate_total_fuel_test() {
+        let fuel = calculate_total_fuel(1969);
+        assert_eq!(fuel, 966);
     }
 }
