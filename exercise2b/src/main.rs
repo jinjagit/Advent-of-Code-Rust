@@ -31,8 +31,8 @@ fn main() {
     }
 
     println!("result found: {}", result_found);
-    println!("verb: {}", verb);
     println!("noun: {}", noun);
+    println!("verb: {}", verb);
     println!("input (100 * noun + verb): {}", 100 * noun + verb);
 }
 
