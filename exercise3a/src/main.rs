@@ -4,7 +4,7 @@
 use std::fs;
 
 fn main() {
-    let input = fs::read_to_string("input.txt").expect("Error reading file!");
+    let input: String = fs::read_to_string("input.txt").expect("Error reading file!");
 
     let split_input: Vec<&str> = input.split('\n').collect();
     let wire_a: Vec<&str> = split_at_commas(&split_input[0]);
@@ -13,7 +13,7 @@ fn main() {
     let wire_a_coords: Vec<[i32; 2]> = coords_from_vectors(&wire_a);
     let wire_b_coords: Vec<[i32; 2]> = coords_from_vectors(&wire_b);
 
-    let distance = distance_to_closest_shared_point(wire_a_coords, wire_b_coords);
+    let distance: u32 = distance_to_closest_shared_point(wire_a_coords, wire_b_coords);
 
     println!("answer = {}", distance);
 }
