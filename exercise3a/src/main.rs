@@ -1,5 +1,5 @@
 // Note: Compile to release build (or will take ages to run with exercise input)
-// Still takes about 15 seconds, so optimization of algorithms may be a good idea!
+// Takes about 15 seconds to find solution.
 
 use std::fs;
 
