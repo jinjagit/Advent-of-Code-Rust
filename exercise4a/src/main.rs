@@ -53,7 +53,7 @@ fn digits_to_number(digits: Vec<u8>) -> u32 {
 
 // converts a 6-digit integer to a vec of sequential integer single-digits
 fn number_to_digits(num: u32) -> Vec<u8> {
-    let mut digits: Vec<u8> = vec![0, 0, 0, 0, 0, 0];
+    let mut digits: Vec<u8> = vec![0; 6];
     let mut divisor: f32 = 100000.0;
     let mut remainder = num;
 
