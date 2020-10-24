@@ -6,31 +6,39 @@
 
 fn main() {
     let mut value: u32 = 284639;
-    let mut digit_pair: bool = false;
+    let mut candidate_counter: u32 = 0;
 
-    // start at left digit, if next digit is lower then make it == previous digit
-    //   this requires reading each digit (? break into array, or use math?) DONE
-    // also, at each digit, record digit, check if next digit == previous and set bool == true if yes
-
-    // at loop end
+    // loop
+    //   set bool == false
+    // start at left digit and iterate over digits to penultimate digit:
+    //   if next digit == current, set bool == true
+    //   if next digit is lower, then next digit = current digit
+    // at loop end:
     //   if bool true, increment counter of candidate passwords
-    //   check if upper range limit reached, if not add 1 to value.
+    //   add 1 to value (break if upper range limit reached).
 
-    let mut digits: Vec<u8> = number_to_digits(value);
 
-    println!("{:?}", digits);
+    while value < 748760 {
+        let mut digits: Vec<u8> = number_to_digits(value);
+        let mut digit_pair: bool = false; 
 
-    let num: u32 = digits_to_number(digits);
+        for i in 0..5 {
+            if digits[i] == digits[i +1] {
+                digit_pair = true;
+            } else if digits[i + 1] < digits[i] {
+                digits[i + 1] = digits[i];
+                digit_pair = true;
+            }
+        }
 
-    println!("num: {}", num);
+        if digit_pair == true {
+            candidate_counter += 1;
+        }
 
-    println!("digits: {:?}", number_to_digits(num));
+        value = digits_to_number(digits) + 1;
+    }
 
-    //digits =
-
-    // while value < 748760 {
-
-    // }
+    println!("candidate passwords: {}", candidate_counter);
 }
 
 // converts a vec of 6 single-digit integers to the integer represented by the digit sequence
