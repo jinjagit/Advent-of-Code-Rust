@@ -7,11 +7,11 @@ fn main() {
     let input: String = fs::read_to_string("input.txt").expect("Error reading file!");
 
     let split_input: Vec<&str> = input.split('\n').collect();
-    let wire_a: Vec<&str> = split_at_commas(&split_input[0]);
-    let wire_b: Vec<&str> = split_at_commas(&split_input[1]);
+    let wire_a: Vec<&str> = split_at_commas(split_input[0]);
+    let wire_b: Vec<&str> = split_at_commas(split_input[1]);
 
-    let wire_a_coords: Vec<[i32; 2]> = coords_from_vectors(&wire_a);
-    let wire_b_coords: Vec<[i32; 2]> = coords_from_vectors(&wire_b);
+    let wire_a_coords: Vec<[i32; 2]> = coords_from_vectors(wire_a);
+    let wire_b_coords: Vec<[i32; 2]> = coords_from_vectors(wire_b);
 
     let distance: u32 = distance_to_closest_shared_point(wire_a_coords, wire_b_coords);
 
@@ -28,7 +28,7 @@ fn split_at_commas(string: &str) -> Vec<&str> {
     list
 }
 
-fn coords_from_vectors(vectors: &Vec<&str>) -> Vec<[i32; 2]> {
+fn coords_from_vectors(vectors: Vec<&str>) -> Vec<[i32; 2]> {
     let mut current_coords: [i32; 2] = [0, 0];
     let mut coords_list: Vec<[i32; 2]> = vec![[0, 0]];
 
@@ -82,8 +82,8 @@ mod tests {
     fn find_distance_from_vectors_test() {
         let wire_a = vec!["R75", "D30", "R83", "U83", "L12", "D49", "R71", "U7", "L72"];
         let wire_b = vec!["U62", "R66", "U55", "R34", "D71", "R55", "D58", "R83"];
-        let wire_a_coords = coords_from_vectors(&wire_a);
-        let wire_b_coords = coords_from_vectors(&wire_b);
+        let wire_a_coords = coords_from_vectors(wire_a);
+        let wire_b_coords = coords_from_vectors(wire_b);
         let distance = distance_to_closest_shared_point(wire_a_coords, wire_b_coords);
         assert_eq!(distance, 159);
 
@@ -93,8 +93,8 @@ mod tests {
         let wire_b = vec![
             "U98", "R91", "D20", "R16", "D67", "R40", "U7", "R15", "U6", "R7",
         ];
-        let wire_a_coords = coords_from_vectors(&wire_a);
-        let wire_b_coords = coords_from_vectors(&wire_b);
+        let wire_a_coords = coords_from_vectors(wire_a);
+        let wire_b_coords = coords_from_vectors(wire_b);
         let distance = distance_to_closest_shared_point(wire_a_coords, wire_b_coords);
         assert_eq!(distance, 135);
     }
