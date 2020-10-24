@@ -8,24 +8,24 @@ fn main() {
     let mut value: u32 = 284639;
     let mut candidate_counter: u32 = 0;
 
-    // loop
-    //     set bool == false
+    // loop (until upper range limit reached)
+    //   set bool == false
     //   start at left digit and iterate over digits to penultimate digit:
-    //     if next digit == current, set bool == true
     //     if next digit is lower, then next digit = current digit
-    //   at loop end:
+    //     if next digit == current, set bool == true
     //     if bool true, increment counter of candidate passwords
-    //     add 1 to value (break if upper range limit reached).
+    //     add 1 to value
 
     while value < 748760 {
         let mut digits: Vec<u8> = number_to_digits(value);
         let mut digit_pair: bool = false;
 
         for i in 0..5 {
-            if digits[i] == digits[i + 1] {
-                digit_pair = true;
-            } else if digits[i + 1] < digits[i] {
+            if digits[i + 1] < digits[i] {
                 digits[i + 1] = digits[i];
+            }
+
+            if digits[i] == digits[i + 1] {
                 digit_pair = true;
             }
         }
