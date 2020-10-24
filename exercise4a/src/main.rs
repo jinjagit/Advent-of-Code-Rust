@@ -13,7 +13,7 @@ fn main() {
     //   start at left digit and iterate over digits to penultimate digit:
     //     if next digit is lower, then next digit = current digit
     //     if next digit == current, set bool = true
-    //     if bool true, increment counter of candidate passwords
+    //     if bool == true, increment counter of candidate passwords
     //     add 1 to value
 
     while value < 748760 {
