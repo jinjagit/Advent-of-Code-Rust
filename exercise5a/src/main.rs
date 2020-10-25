@@ -71,27 +71,87 @@
 //       maybe use a struct for this?
 
 pub struct InstructionSet {
-    raw: i32,
-    opcode: i32,
+    opcode: u8,
+    param1_mode: u8,
+    param2_mode: u8,
+    param3_mode: u8,
 }
 
 impl Default for InstructionSet {
     fn default() -> Self {
-        InstructionSet { raw: 0, opcode: 0 }
+        InstructionSet {
+            opcode: 0,
+            param1_mode: 0,
+            param2_mode: 0,
+            param3_mode: 0,
+        }
     }
 }
 
 impl InstructionSet {
-    fn new_raw_code(&mut self, code: i32) {
-        self.raw = code;
+    fn new_raw_code(&mut self, raw: i32) {
+        let digit_chars: Vec<char> = raw.to_string().chars().collect::<Vec<_>>();
+        let digits: Vec<u8> = digit_chars
+            .iter()
+            .map(|c| *c as u8 - 48) // -48 = integer represented by ascii char value
+            .collect::<Vec<u8>>();
+        let count: usize = digits.iter().count();
+
+        println!("digits: {:?}", digits);
+
+        if count == 1 && (digits[0] > 0 && digits[0] < 5) {
+            self.opcode = digits[0];
+        } else if digits[count - 2] == 0 && (digits[count - 1] > 0 && digits[count - 1] < 5) {
+            self.opcode = digits[count - 1];
+        } else if digits[count - 2] == 9 && digits[count - 1] == 9 {
+            self.opcode = 99;
+        } else {
+            panic!("Error! Unable to parse valid opcode from {}", raw);
+        }
     }
 }
 fn main() {
     let mut intcode: InstructionSet = Default::default();
 
-    println!("raw: {}, opcode: {}", intcode.raw, intcode.opcode);
+    println!(
+        "opcode: {} - modes; p1: {}, p2: {}, p3: {}",
+        intcode.opcode, intcode.param1_mode, intcode.param2_mode, intcode.param3_mode
+    );
 
-    intcode.new_raw_code(999);
+    intcode.new_raw_code(799);
 
-    println!("raw: {}, opcode: {}", intcode.raw, intcode.opcode);
+    println!(
+        "opcode: {} - modes; p1: {}, p2: {}, p3: {}",
+        intcode.opcode, intcode.param1_mode, intcode.param2_mode, intcode.param3_mode
+    );
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn parse_opcode_test() {
+        let mut intcode: InstructionSet = Default::default();
+
+        intcode.new_raw_code(1002);
+        assert_eq!(intcode.opcode, 2);
+        
+        intcode.new_raw_code(3);
+        assert_eq!(intcode.opcode, 3);
+
+        intcode.new_raw_code(99);
+        assert_eq!(intcode.opcode, 99);
+
+        intcode.new_raw_code(799);
+        assert_eq!(intcode.opcode, 99);
+    }
+
+    #[test]
+    #[should_panic(expected = "Error! Unable to parse valid opcode from 1112")]
+    fn invalid_opcode() {
+        let mut intcode: InstructionSet = Default::default();
+
+        intcode.new_raw_code(1112);
+    }
 }
