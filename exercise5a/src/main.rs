@@ -68,6 +68,7 @@ impl InstructionSet {
         }
     }
 }
+
 fn main() {
     let mut memory: Vec<i32> = parse_memory_from_text_file("input.txt");
     let mut pointer: usize = 0;
