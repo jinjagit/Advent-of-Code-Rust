@@ -119,7 +119,6 @@ fn get_value(param_mode: &u8, val_or_posn: &i32, memory: &Vec<i32>) -> i32 {
 fn parse_memory_from_text_file(filename: &str) -> Vec<i32> {
     let memory_string: String = fs::read_to_string(filename).expect("Error reading file!");
     let split_input: Vec<&str> = memory_string.split(',').collect();
-
     let memory: Vec<i32> = split_input
         .iter()
         .map(|s| s.parse::<i32>().unwrap())
