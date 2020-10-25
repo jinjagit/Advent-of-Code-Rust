@@ -26,7 +26,7 @@ impl InstructionSet {
         self.param2_mode = 0;
         self.param3_mode = 0;
 
-        // Parse vec of integers from raw instruction set code integer.
+        // Parse vec of integers from raw instruction-set code integer.
         let digit_chars: Vec<char> = raw.to_string().chars().collect::<Vec<_>>();
         let digits: Vec<u8> = digit_chars
             .iter()
@@ -45,7 +45,7 @@ impl InstructionSet {
             panic!("Error! Unable to parse valid opcode from {}", raw);
         }
 
-        // Parse paramater modes, if specified in raw instruction set code integer.
+        // Parse paramater modes, if specified in raw instruction-set code integer.
         let check_param_mode = |n: u8| {
             if n != 0 && n != 1 {
                 panic!("Error! Unable to parse valid parameter mode from {}", raw);
