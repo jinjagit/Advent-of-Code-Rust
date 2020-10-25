@@ -70,6 +70,8 @@
 //       then each opcode can access the number of param mode values it needs
 //       maybe use a struct for this?
 
+use std::fs;
+
 pub struct InstructionSet {
     opcode: u8,
     param1_mode: u8,
@@ -116,42 +118,53 @@ impl InstructionSet {
         }
 
         // parse paramater modes, if specified in raw code integer
+        let check_param_mode = |n: u8| {
+            if n != 0 && n != 1 {
+                panic!("Error! Unable to parse valid parameter mode from {}", raw);
+            }
+        };
+
         if count > 2 {
             self.param1_mode = digits[count - 3];
+            check_param_mode(self.param1_mode);
 
             if count > 3 {
                 self.param2_mode = digits[count - 4];
+                check_param_mode(self.param1_mode);
 
                 if count > 4 {
                     self.param3_mode = digits[count - 5];
+                    check_param_mode(self.param1_mode);
                 }
             }
         }
     }
 }
 fn main() {
+    let mut memory: Vec<i32> = parse_memory_from_text_file("input.txt");
     let mut intcode: InstructionSet = Default::default();
 
-    println!(
-        "opcode: {} - modes; p1: {}, p2: {}, p3: {}",
-        intcode.opcode, intcode.param1_mode, intcode.param2_mode, intcode.param3_mode
-    );
+    println!("{:?}", memory);
 
-    intcode.new_raw_code(61104);
+    // intcode.new_raw_code(4);
 
-    println!(
-        "opcode: {} - modes; p1: {}, p2: {}, p3: {}",
-        intcode.opcode, intcode.param1_mode, intcode.param2_mode, intcode.param3_mode
-    );
-
-    intcode.new_raw_code(4);
-
-    println!(
-        "opcode: {} - modes; p1: {}, p2: {}, p3: {}",
-        intcode.opcode, intcode.param1_mode, intcode.param2_mode, intcode.param3_mode
-    );
+    // println!(
+    //     "opcode: {} - modes; p1: {}, p2: {}, p3: {}",
+    //     intcode.opcode, intcode.param1_mode, intcode.param2_mode, intcode.param3_mode
+    // );
 }
 
+fn parse_memory_from_text_file(filename: &str) -> Vec<i32> {
+    let memory_string: String = fs::read_to_string(filename).expect("Error reading file!");
+    let split_input: Vec<&str> = memory_string.split(',').collect();
+
+    let memory: Vec<i32> = split_input
+        .iter()
+        .map(|s| s.parse::<i32>().unwrap())
+        .collect::<Vec<i32>>();
+
+    memory
+}
 
 #[cfg(test)]
 mod tests {
@@ -162,14 +175,14 @@ mod tests {
 
         intcode.new_raw_code(1002);
         assert_eq!(intcode.opcode, 2);
-        
+
         intcode.new_raw_code(3);
         assert_eq!(intcode.opcode, 3);
 
         intcode.new_raw_code(99);
         assert_eq!(intcode.opcode, 99);
 
-        intcode.new_raw_code(799);
+        intcode.new_raw_code(199);
         assert_eq!(intcode.opcode, 99);
     }
 
@@ -179,5 +192,33 @@ mod tests {
         let mut intcode: InstructionSet = Default::default();
 
         intcode.new_raw_code(1112);
+    }
+
+    #[test]
+    fn parse_param_modes_test() {
+        let mut intcode: InstructionSet = Default::default();
+
+        intcode.new_raw_code(1002);
+        assert_eq!(intcode.param1_mode, 0);
+        assert_eq!(intcode.param2_mode, 1);
+        assert_eq!(intcode.param3_mode, 0);
+
+        intcode.new_raw_code(11003);
+        assert_eq!(intcode.param1_mode, 0);
+        assert_eq!(intcode.param2_mode, 1);
+        assert_eq!(intcode.param3_mode, 1);
+
+        intcode.new_raw_code(711003);
+        assert_eq!(intcode.param1_mode, 0);
+        assert_eq!(intcode.param2_mode, 1);
+        assert_eq!(intcode.param3_mode, 1);
+    }
+
+    #[test]
+    #[should_panic(expected = "Error! Unable to parse valid parameter mode from 1302")]
+    fn invalid_param_mode() {
+        let mut intcode: InstructionSet = Default::default();
+
+        intcode.new_raw_code(1302);
     }
 }
