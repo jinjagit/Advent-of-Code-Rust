@@ -20,13 +20,13 @@ impl Default for InstructionSet {
 
 impl InstructionSet {
     fn new_raw_code(&mut self, raw: i32) {
-        // reset default values
+        // Reset default values.
         self.opcode = 0;
         self.param1_mode = 0;
         self.param2_mode = 0;
         self.param3_mode = 0;
 
-        // parse vec of integers from raw code integer
+        // Parse vec of integers from raw instruction set code integer.
         let digit_chars: Vec<char> = raw.to_string().chars().collect::<Vec<_>>();
         let digits: Vec<u8> = digit_chars
             .iter()
@@ -34,7 +34,7 @@ impl InstructionSet {
             .collect::<Vec<u8>>();
         let count: usize = digits.iter().count();
 
-        // parse opcode
+        // Parse opcode.
         if count == 1 && (digits[0] > 0 && digits[0] < 5) {
             self.opcode = digits[0];
         } else if digits[count - 2] == 0 && (digits[count - 1] > 0 && digits[count - 1] < 5) {
@@ -45,7 +45,7 @@ impl InstructionSet {
             panic!("Error! Unable to parse valid opcode from {}", raw);
         }
 
-        // parse paramater modes, if specified in raw code integer
+        // Parse paramater modes, if specified in raw code integer.
         let check_param_mode = |n: u8| {
             if n != 0 && n != 1 {
                 panic!("Error! Unable to parse valid parameter mode from {}", raw);
@@ -107,6 +107,8 @@ fn main() {
     println!("outputs: {:?}", outputs);
 }
 
+// Returns either the value of 'val_or_position' or the value at the index of 'memory' with the
+// value of 'val_or_posn', depending on the value of 'param_mode' (0 or 1).
 fn get_value(param_mode: &u8, val_or_posn: &i32, memory: &Vec<i32>) -> i32 {
     if param_mode == &0 {
         let position = *val_or_posn as usize;
