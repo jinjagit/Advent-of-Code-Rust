@@ -90,6 +90,13 @@ impl Default for InstructionSet {
 
 impl InstructionSet {
     fn new_raw_code(&mut self, raw: i32) {
+        // reset default values
+        self.opcode = 0;
+        self.param1_mode = 0;
+        self.param2_mode = 0;
+        self.param3_mode = 0;
+
+        // parse vec of integers from raw code integer
         let digit_chars: Vec<char> = raw.to_string().chars().collect::<Vec<_>>();
         let digits: Vec<u8> = digit_chars
             .iter()
@@ -97,8 +104,7 @@ impl InstructionSet {
             .collect::<Vec<u8>>();
         let count: usize = digits.iter().count();
 
-        println!("digits: {:?}", digits);
-
+        // parse opcode
         if count == 1 && (digits[0] > 0 && digits[0] < 5) {
             self.opcode = digits[0];
         } else if digits[count - 2] == 0 && (digits[count - 1] > 0 && digits[count - 1] < 5) {
@@ -107,6 +113,19 @@ impl InstructionSet {
             self.opcode = 99;
         } else {
             panic!("Error! Unable to parse valid opcode from {}", raw);
+        }
+
+        // parse paramater modes, if specified in raw code integer
+        if count > 2 {
+            self.param1_mode = digits[count - 3];
+
+            if count > 3 {
+                self.param2_mode = digits[count - 4];
+
+                if count > 4 {
+                    self.param3_mode = digits[count - 5];
+                }
+            }
         }
     }
 }
@@ -118,7 +137,14 @@ fn main() {
         intcode.opcode, intcode.param1_mode, intcode.param2_mode, intcode.param3_mode
     );
 
-    intcode.new_raw_code(799);
+    intcode.new_raw_code(61104);
+
+    println!(
+        "opcode: {} - modes; p1: {}, p2: {}, p3: {}",
+        intcode.opcode, intcode.param1_mode, intcode.param2_mode, intcode.param3_mode
+    );
+
+    intcode.new_raw_code(4);
 
     println!(
         "opcode: {} - modes; p1: {}, p2: {}, p3: {}",
