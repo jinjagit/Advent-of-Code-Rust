@@ -45,7 +45,7 @@ impl InstructionSet {
             panic!("Error! Unable to parse valid opcode from {}", raw);
         }
 
-        // Parse paramater modes, if specified in raw code integer.
+        // Parse paramater modes, if specified in raw instruction set code integer.
         let check_param_mode = |n: u8| {
             if n != 0 && n != 1 {
                 panic!("Error! Unable to parse valid parameter mode from {}", raw);
