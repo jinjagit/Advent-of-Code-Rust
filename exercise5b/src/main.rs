@@ -138,6 +138,7 @@ fn run_program(mut memory: Vec<i32>, input: i32) -> Vec<i32> {
             } else {
                 memory[address] = 0;
             }
+
             pointer += 4;
         } else if intcode.opcode == 8 {
             let param_1 = get_value(&intcode.param1_mode, &memory[pointer + 1], &memory);
@@ -149,6 +150,7 @@ fn run_program(mut memory: Vec<i32>, input: i32) -> Vec<i32> {
             } else {
                 memory[address] = 0;
             }
+            
             pointer += 4;
         } else if intcode.opcode == 99 {
             break;
