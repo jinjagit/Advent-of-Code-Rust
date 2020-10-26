@@ -4,7 +4,6 @@ pub struct InstructionSet {
     opcode: u8,
     param1_mode: u8,
     param2_mode: u8,
-    param3_mode: u8,
 }
 
 impl Default for InstructionSet {
@@ -13,7 +12,6 @@ impl Default for InstructionSet {
             opcode: 0,
             param1_mode: 0,
             param2_mode: 0,
-            param3_mode: 0,
         }
     }
 }
@@ -24,7 +22,6 @@ impl InstructionSet {
         self.opcode = 0;
         self.param1_mode = 0;
         self.param2_mode = 0;
-        self.param3_mode = 0;
 
         // Parse vec of integers from raw instruction-set code integer.
         let digit_chars: Vec<char> = raw.to_string().chars().collect::<Vec<_>>();
@@ -59,11 +56,6 @@ impl InstructionSet {
             if count > 3 {
                 self.param2_mode = digits[count - 4];
                 check_param_mode(self.param2_mode);
-
-                if count > 4 {
-                    self.param3_mode = digits[count - 5];
-                    check_param_mode(self.param3_mode);
-                }
             }
         }
     }
@@ -218,17 +210,14 @@ mod tests {
         intcode.new_raw_code(1002);
         assert_eq!(intcode.param1_mode, 0);
         assert_eq!(intcode.param2_mode, 1);
-        assert_eq!(intcode.param3_mode, 0);
 
         intcode.new_raw_code(11003);
         assert_eq!(intcode.param1_mode, 0);
         assert_eq!(intcode.param2_mode, 1);
-        assert_eq!(intcode.param3_mode, 1);
 
         intcode.new_raw_code(711003);
         assert_eq!(intcode.param1_mode, 0);
         assert_eq!(intcode.param2_mode, 1);
-        assert_eq!(intcode.param3_mode, 1);
     }
 
     #[test]
