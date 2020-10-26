@@ -191,4 +191,23 @@ mod tests {
 
         intcode.new_raw_code(1302);
     }
+
+    #[test]
+    fn run_program_test() {
+        // Tests of examples & exercise from 5a:
+        let outputs = run_program(vec![3, 0, 4, 0, 99], 42);
+        assert_eq!(outputs, [42]);
+
+        let outputs = run_program(vec![1002, 4, 3, 4, 33], 42);
+        assert_eq!(outputs, []);
+
+        let outputs = run_program(vec![1101, 100, -1, 4, 0], 42);
+        assert_eq!(outputs, []);
+
+        let memory: Vec<i32> = parse_memory_from_text_file("5a_input.txt");
+        let outputs = run_program(memory, 1);
+        assert_eq!(outputs, [0, 0, 0, 0, 0, 0, 0, 0, 0, 7286649]);
+
+        // Tests of examples for this exercise:
+    }
 }
