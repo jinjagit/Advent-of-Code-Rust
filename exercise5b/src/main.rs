@@ -160,6 +160,8 @@ fn run_program(mut memory: Vec<i32>, input: i32) -> Vec<i32> {
     outputs
 }
 
+// Returns either the value in 'memory' at 'pointer' index, or the value at the 'memory' index given
+// by the value in 'memory' at 'pointer' index, depending on the value of 'param_mode' (0 or 1).
 fn get_value(param_mode: &u8, pointer: &usize, memory: &Vec<i32>) -> i32 {
     let val_or_posn = memory[*pointer];
 
@@ -169,17 +171,6 @@ fn get_value(param_mode: &u8, pointer: &usize, memory: &Vec<i32>) -> i32 {
         return val_or_posn as i32;
     }
 }
-
-// Returns either the value of 'val_or_position' or the value at the index of 'memory' with the
-// value of 'val_or_posn', depending on the value of 'param_mode' (0 or 1).
-// fn get_value(param_mode: &u8, val_or_posn: &i32, memory: &Vec<i32>) -> i32 {
-//     if param_mode == &0 {
-//         let position = *val_or_posn as usize;
-//         return memory[position] as i32;
-//     } else {
-//         return *val_or_posn;
-//     }
-// }
 
 fn parse_memory_from_text_file(filename: &str) -> Vec<i32> {
     let memory_string: String = fs::read_to_string(filename).expect("Error reading file!");
