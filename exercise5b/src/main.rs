@@ -70,11 +70,18 @@ impl InstructionSet {
 }
 
 fn main() {
-    let mut memory: Vec<i32> = parse_memory_from_text_file("input.txt");
+    let memory: Vec<i32> = parse_memory_from_text_file("input.txt");
+    let input: i32 = 1;
+
+    let outputs = run_program(memory, input);
+
+    println!("outputs: {:?}", outputs);
+}
+
+fn run_program(mut memory: Vec<i32>, input: i32) -> Vec<i32> {
     let mut pointer: usize = 0;
     let mut intcode: InstructionSet = Default::default();
     let mut outputs: Vec<i32> = vec![];
-    let input: i32 = 1;
 
     loop {
         intcode.new_raw_code(memory[pointer]);
@@ -104,7 +111,7 @@ fn main() {
         }
     }
 
-    println!("outputs: {:?}", outputs);
+    outputs
 }
 
 // Returns either the value of 'val_or_position' or the value at the index of 'memory' with the
