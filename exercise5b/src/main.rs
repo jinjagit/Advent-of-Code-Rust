@@ -87,15 +87,15 @@ fn run_program(mut memory: Vec<i32>, input: i32) -> Vec<i32> {
         intcode.new_raw_code(memory[pointer]);
 
         if intcode.opcode == 1 {
-            let param_1 = get_value(&intcode.param1_mode, &memory[pointer + 1], &memory);
-            let param_2 = get_value(&intcode.param2_mode, &memory[pointer + 2], &memory);
+            let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &memory);
+            let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &memory);
             let address = memory[pointer + 3] as usize;
 
             memory[address] = param_1 + param_2;
             pointer += 4;
         } else if intcode.opcode == 2 {
-            let param_1 = get_value(&intcode.param1_mode, &memory[pointer + 1], &memory);
-            let param_2 = get_value(&intcode.param2_mode, &memory[pointer + 2], &memory);
+            let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &memory);
+            let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &memory);
             let address = memory[pointer + 3] as usize;
 
             memory[address] = param_1 * param_2;
@@ -106,31 +106,31 @@ fn run_program(mut memory: Vec<i32>, input: i32) -> Vec<i32> {
             memory[address] = input;
             pointer += 2;
         } else if intcode.opcode == 4 {
-            let value: i32 = get_value(&intcode.param1_mode, &memory[pointer + 1], &memory);
+            let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &memory);
 
-            outputs.push(value);
+            outputs.push(param_1);
             pointer += 2;
         } else if intcode.opcode == 5 {
-            let param_1 = get_value(&intcode.param1_mode, &memory[pointer + 1], &memory);
+            let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &memory);
 
             if param_1 != 0 {
-                let param_2 = get_value(&intcode.param2_mode, &memory[pointer + 2], &memory);
+                let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &memory);
                 pointer = param_2 as usize;
             } else {
                 pointer += 3
             }
         } else if intcode.opcode == 6 {
-            let param_1 = get_value(&intcode.param1_mode, &memory[pointer + 1], &memory);
+            let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &memory);
 
             if param_1 == 0 {
-                let param_2 = get_value(&intcode.param2_mode, &memory[pointer + 2], &memory);
+                let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &memory);
                 pointer = param_2 as usize;
             } else {
                 pointer += 3
             }
         } else if intcode.opcode == 7 {
-            let param_1 = get_value(&intcode.param1_mode, &memory[pointer + 1], &memory);
-            let param_2 = get_value(&intcode.param2_mode, &memory[pointer + 2], &memory);
+            let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &memory);
+            let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &memory);
             let address = memory[pointer + 3] as usize;
 
             if param_1 < param_2 {
@@ -141,8 +141,8 @@ fn run_program(mut memory: Vec<i32>, input: i32) -> Vec<i32> {
 
             pointer += 4;
         } else if intcode.opcode == 8 {
-            let param_1 = get_value(&intcode.param1_mode, &memory[pointer + 1], &memory);
-            let param_2 = get_value(&intcode.param2_mode, &memory[pointer + 2], &memory);
+            let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &memory);
+            let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &memory);
             let address = memory[pointer + 3] as usize;
 
             if param_1 == param_2 {
@@ -150,7 +150,7 @@ fn run_program(mut memory: Vec<i32>, input: i32) -> Vec<i32> {
             } else {
                 memory[address] = 0;
             }
-            
+
             pointer += 4;
         } else if intcode.opcode == 99 {
             break;
@@ -160,16 +160,26 @@ fn run_program(mut memory: Vec<i32>, input: i32) -> Vec<i32> {
     outputs
 }
 
-// Returns either the value of 'val_or_position' or the value at the index of 'memory' with the
-// value of 'val_or_posn', depending on the value of 'param_mode' (0 or 1).
-fn get_value(param_mode: &u8, val_or_posn: &i32, memory: &Vec<i32>) -> i32 {
+fn get_value(param_mode: &u8, pointer: &usize, memory: &Vec<i32>) -> i32 {
+    let val_or_posn = memory[*pointer];
+
     if param_mode == &0 {
-        let position = *val_or_posn as usize;
-        return memory[position] as i32;
+        return memory[val_or_posn as usize] as i32;
     } else {
-        return *val_or_posn;
+        return val_or_posn as i32;
     }
 }
+
+// Returns either the value of 'val_or_position' or the value at the index of 'memory' with the
+// value of 'val_or_posn', depending on the value of 'param_mode' (0 or 1).
+// fn get_value(param_mode: &u8, val_or_posn: &i32, memory: &Vec<i32>) -> i32 {
+//     if param_mode == &0 {
+//         let position = *val_or_posn as usize;
+//         return memory[position] as i32;
+//     } else {
+//         return *val_or_posn;
+//     }
+// }
 
 fn parse_memory_from_text_file(filename: &str) -> Vec<i32> {
     let memory_string: String = fs::read_to_string(filename).expect("Error reading file!");
