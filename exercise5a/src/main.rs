@@ -58,11 +58,11 @@ impl InstructionSet {
 
             if count > 3 {
                 self.param2_mode = digits[count - 4];
-                check_param_mode(self.param1_mode);
+                check_param_mode(self.param2_mode);
 
                 if count > 4 {
                     self.param3_mode = digits[count - 5];
-                    check_param_mode(self.param1_mode);
+                    check_param_mode(self.param3_mode);
                 }
             }
         }
