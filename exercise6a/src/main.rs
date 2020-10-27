@@ -1,11 +1,11 @@
 
-pub struct Body {
-    name: String,
+pub struct Body<'a> {
+    name: &'a str,
     orbits: i32,
-    orbiting: String,
+    orbiting: &'a str,
 }
 
-impl Body {
+impl Body<'_> {
     fn print(&self) {
         println!("name: {}, orbits: {}, orbiting: {}", self.name, self.orbits, self.orbiting);
     }
@@ -16,9 +16,9 @@ fn main() {
 
     for i in 0..5 {
         let my_struct = Body {
-            name: String::from("some_name"),
+            name: "some_name",
             orbits: i,
-            orbiting: String::from("some_name"), 
+            orbiting: "some_name", 
         };
 
         my_vec.push(my_struct);
