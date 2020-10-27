@@ -98,6 +98,9 @@ for array in vec {
 
 }
 ```
-1st tricky thing is to work out how to add structs to a vec (? need different names for each struct or not).  
+1st tricky thing is to work out how to add structs to a vec (? need different names for each struct or not). DONE  
   
-Let's read through instructions carefully, before going down this route!  
+Let's read through instructions carefully, before going down this route! Confirmed - my basic assumptions are correct.  
+
+Next steps:
+1. Split input string into vec of component parts.
