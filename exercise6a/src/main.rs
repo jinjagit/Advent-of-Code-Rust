@@ -22,8 +22,8 @@ fn main() {
     let split_input: Vec<&str> = input_string.split('\n').collect();
     let mut input: Vec<&str> = vec![];
 
-    for elem in split_input {
-        input.append(&mut elem.split(")").collect());
+    for body_pair in split_input {
+        input.append(&mut body_pair.split(")").collect());
     }
 
     println!("input vec: {:?}", input); // DEBUG
