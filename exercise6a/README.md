@@ -69,8 +69,6 @@ Struct SomeName {
 ```
 Split input string into vec of arrays, each array contains 2 strings [body, orbiting]  
   
-Initial body = Something, which has orbits = 1 and orbiting = 'COM'  
-  
 Could do math as add structs to vec (or could after).
 Pseudocode:    
 ```
@@ -103,4 +101,4 @@ for array in vec {
 Let's read through instructions carefully, before going down this route! Confirmed - my basic assumptions are correct.  
 
 Next steps:
-1. Split input string into vec of component parts.
+1. Split input string into vec of component parts. DONE

@@ -3,17 +3,7 @@ use std::fs;
 pub struct Body<'a> {
     name: &'a str,
     orbits: i32,
-    orbiting: &'a str,
-}
-
-impl Body<'_> {
-    fn print(&self) { // DEBUG
-        println!("name: {}, orbits: {}, orbiting: {}", self.name, self.orbits, self.orbiting);
-    }
-
-    fn get_name(&self) -> &str {
-        self.name
-    }
+    //orbiting: &'a str,
 }
 
 fn main() {
@@ -26,29 +16,59 @@ fn main() {
         input.append(&mut body_pair.split(")").collect());
     }
 
-    println!("input vec: {:?}", input); // DEBUG
+    // println!("input: {:?}", input);
 
-    // Next step (in development): produce vec of structs from input vec.
-    // Eventual plan: count total_orbits as create vec of structs, using the orbits value of
-    // previously added structs as data required when the chain of heirarchy in the input list jumps
-    // to a body (struct) that is located more than 1 item previous in the list.
-    
-    // This is just a POC adding structs to a vec (which can then be read)
+    for elem in &input {
+        if elem == &"COM" {
+            println!("Found COM");
+        }
+    }
+
+    // Create vec of Body structs from input vec, using previously defined structs to find value of
+    // orbits for any Body that is not orbiting previous Body in vec.
+    // Keep running total of orbits as vec of Body structs is built.
+
+    // DOES NOT WORK, because exercise list does not start with COM, thus all input entries before
+    // COM are not totalled properly (orbits not correctly calculated)
+    let num = input.iter().count();
     let mut bodies: Vec<Body> = vec![];
+    let mut orbits: i32 = 0;
+    let mut total_orbits: i32 = 0;
 
-    for i in 0..5 {
+    for i in 0..num / 2 {
+        if i == 0 {
+            orbits = 1;
+        } else if input[i * 2] == input[i * 2 - 1] {
+            orbits += 1;
+        } else {
+            orbits = find_orbits_count(input[i * 2], &bodies) + 1;
+        }
+
         let body = Body {
-            name: "some_name",
-            orbits: i,
-            orbiting: "some_name", 
+            name: input[i * 2 + 1],
+            orbits: orbits,
+            //orbiting: input[i * 2],
         };
 
         bodies.push(body);
+        total_orbits += orbits;
     }
 
-    // DEBUG:
     // for body in bodies {
-    //     body.print();
-    //     println!("name: {}", body.get_name());
-    // } 
+    //     println! ("name: {}, orbits: {}, orbiting: {}", body.name, body.orbits, body.orbiting);
+    // }
+
+    println!("total orbits: {}", total_orbits);
+}
+
+fn find_orbits_count(orbiting: &str, bodies: &Vec<Body>) -> i32 {
+    let mut orbits: i32 = 0;
+
+    for body in bodies {
+        if body.name == orbiting {
+            orbits = body.orbits;
+        }
+    }
+
+    orbits
 }
