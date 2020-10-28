@@ -2,8 +2,7 @@ use std::fs;
 
 pub struct Body<'a> {
     name: &'a str,
-    orbits: i32,
-    //orbiting: &'a str,
+    orbiting: &'a str,
 }
 
 fn main() {
@@ -16,59 +15,68 @@ fn main() {
         input.append(&mut body_pair.split(")").collect());
     }
 
-    // println!("input: {:?}", input);
-
-    for elem in &input {
-        if elem == &"COM" {
-            println!("Found COM");
-        }
-    }
-
-    // Create vec of Body structs from input vec, using previously defined structs to find value of
-    // orbits for any Body that is not orbiting previous Body in vec.
-    // Keep running total of orbits as vec of Body structs is built.
-
-    // DOES NOT WORK, because exercise list does not start with COM, thus all input entries before
-    // COM are not totalled properly (orbits not correctly calculated)
+    // Create vec of Body structs from input vec.
     let num = input.iter().count();
     let mut bodies: Vec<Body> = vec![];
-    let mut orbits: i32 = 0;
-    let mut total_orbits: i32 = 0;
 
     for i in 0..num / 2 {
-        if i == 0 {
-            orbits = 1;
-        } else if input[i * 2] == input[i * 2 - 1] {
-            orbits += 1;
-        } else {
-            orbits = find_orbits_count(input[i * 2], &bodies) + 1;
-        }
-
         let body = Body {
             name: input[i * 2 + 1],
-            orbits: orbits,
-            //orbiting: input[i * 2],
+            orbiting: input[i * 2],
         };
 
         bodies.push(body);
-        total_orbits += orbits;
     }
 
-    // for body in bodies {
-    //     println! ("name: {}, orbits: {}, orbiting: {}", body.name, body.orbits, body.orbiting);
-    // }
+    let mut count = bodies.iter().count();
+    let mut total_orbits = 0;
+    let mut orbits = 1;
+    let mut parents: Vec<Body> = vec![];
+    let mut children: Vec<Body> = vec![];
+    let mut index = count;
 
-    println!("total orbits: {}", total_orbits);
-}
+    while index > 0 {
+        index -= 1;
 
-fn find_orbits_count(orbiting: &str, bodies: &Vec<Body>) -> i32 {
-    let mut orbits: i32 = 0;
+        if bodies[index].orbiting == "COM" {
+            let parent = Body {
+                name: bodies[index].name,
+                orbiting: bodies[index].orbiting,
+            };
 
-    for body in bodies {
-        if body.name == orbiting {
-            orbits = body.orbits;
+            parents.push(parent);
+            bodies.remove(index);
+            total_orbits += orbits;
+            count -= 1;
         }
     }
 
-    orbits
+    while count > 0 {
+        orbits += 1;
+
+        for parent in &parents {
+            index = count;
+
+            while index > 0 {
+                index -= 1;
+
+                if bodies[index].orbiting == parent.name {
+                    let child = Body {
+                        name: bodies[index].name,
+                        orbiting: bodies[index].orbiting,
+                    };
+
+                    children.push(child);
+                    bodies.remove(index);
+                    total_orbits += orbits;
+                    count -= 1;
+                }
+            }
+        }
+
+        parents = children;
+        children = vec![];
+    }
+
+    println!("total orbits: {}", total_orbits);
 }

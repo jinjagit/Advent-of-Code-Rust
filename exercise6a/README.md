@@ -57,48 +57,51 @@ What is the total number of direct and indirect orbits in your map data?
 
 ## My thoughts:
   
-This looks like a graph thing. But, at first glance (not reading through exercise thoroughly, and not researching how to implement a graph nor std or non-std libraries for graphs), my hunch is this would work.  
+This looks like a graph thing. But, at first glance (not reading through exercise thoroughly, and not researching how to implement a graph nor std or non-std libraries for graphs), my hunch is the follwing would work:  
   
 Use a vec of structs. Read in each relationship from data as a struct:  
 ```
 Struct SomeName {
-  body: String,
-  orbits: i32,
-  orbiting: String,
+  body: &str,
+  orbiting: &str,
 }
 ```
+Note: could just use an array (not struct), but disadvantage is does not use named vars (? use hashmap with k/v pairs)
+
 Split input string into vec of arrays, each array contains 2 strings [body, orbiting]  
   
-Could do math as add structs to vec (or could after).
-Pseudocode:    
+Convert to a vec of structs.    
+   
+Then, pseudocode:   
 ```
-let mut total_orbits: i32 = 0;
-let mut index = 0;
-let previous_body: String = "nothing"
+let mut count = bodies.iter().count();
+let total_orbits = 0;
+let mut orbits = 1;
+let mut parents vec = vec![]
+let mut children vec = vec![]
 
-for array in vec {
-  orbits = 0;
-  
-  if array[index].orbiting = COM {
-    orbits = 1;
-  } else if array[index].orbting = array[index -1].body {
-    orbits = array[index - 1].orbits + 1;
-  } else {
-    orbits = find_struct(struct_with_orbiting_as_body).orbits + 1;
+for each body in bodies {
+  if body.orbiting == "COM"
+    body.orbits = orbits
+    move body to parents vec (OR add / remove)
+    total_orbits += orbits
+    count -= 1
+}
+
+loop while count > 0 {
+  orbits += 1
+
+  for each body in parent {
+    for each body in bodies {
+      if bodies.body.orbiting == parents.body.name
+      set bodies.body.orbits to parents.body.orbits + 1
+      move bodies.body to children vec (OR add / remove)
+      total_orbits += orbits
+      count -= 1
+    }
   }
 
-  create struct using new info;
-  add struct to vec of structs
-
-  total_orbits += orbits
-
-  index += 1;
-
+  parents vec = children vec
+  children vec = vec![]  
 }
 ```
-1st tricky thing is to work out how to add structs to a vec (? need different names for each struct or not). DONE  
-  
-Let's read through instructions carefully, before going down this route! Confirmed - my basic assumptions are correct.  
-
-Next steps:
-1. Split input string into vec of component parts. DONE
