@@ -23,8 +23,7 @@ fn main() {
     let mut input: Vec<&str> = vec![];
 
     for elem in split_input {
-        let mut new_elem: Vec<&str> = elem.split(")").collect();
-        input.append(&mut new_elem);
+        input.append(&mut elem.split(")").collect());
     }
 
     println!("input vec: {:?}", input); // DEBUG
