@@ -6,28 +6,8 @@ pub struct Body<'a> {
 }
 
 fn main() {
-    // Get vec of names (&str's) of orbiting bodies from input text file.
-    let input_string: String = fs::read_to_string("input.txt").expect("Error reading file!");
-    let split_input: Vec<&str> = input_string.split('\n').collect();
-    let mut input: Vec<&str> = vec![];
-
-    for body_pair in split_input {
-        input.append(&mut body_pair.split(")").collect());
-    }
-
-    // Create vec of Body structs from input vec.
-    let num = input.iter().count();
-    let mut bodies: Vec<Body> = vec![];
-
-    for i in 0..num / 2 {
-        let body = Body {
-            name: input[i * 2 + 1],
-            orbiting: input[i * 2],
-        };
-
-        bodies.push(body);
-    }
-
+    let input_string = fs::read_to_string("input.txt").expect("Error reading file!");
+    let mut bodies: Vec<Body> = parse_input(&input_string);
     let mut count = bodies.iter().count();
     let mut total_orbits = 0;
     let mut orbits = 1;
@@ -79,4 +59,29 @@ fn main() {
     }
 
     println!("total orbits: {}", total_orbits);
+}
+
+fn parse_input(string: &String) -> Vec<Body> {
+    // Get vec of names (&str's) of orbiting bodies from input string.
+    let split_input: Vec<&str> = string.split('\n').collect();
+    let mut input: Vec<&str> = vec![];
+
+    for body_pair in split_input {
+        input.append(&mut body_pair.split(")").collect());
+    }
+
+    // Create vec of Body structs from input vec.
+    let num = input.iter().count();
+    let mut bodies: Vec<Body> = vec![];
+
+    for i in 0..num / 2 {
+        let body = Body {
+            name: input[i * 2 + 1],
+            orbiting: input[i * 2],
+        };
+
+        bodies.push(body);
+    }
+
+    bodies
 }
