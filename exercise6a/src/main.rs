@@ -8,6 +8,12 @@ pub struct Body<'a> {
 fn main() {
     let input_string = fs::read_to_string("input.txt").expect("Error reading file!");
     let mut bodies: Vec<Body> = parse_input(&input_string);
+    let total_orbits: i32 = calculate_total_orbits(&mut bodies);
+
+    println!("total orbits: {}", total_orbits);
+}
+
+fn calculate_total_orbits(bodies: &mut Vec<Body>) -> i32 {
     let mut count = bodies.iter().count();
     let mut total_orbits = 0;
     let mut orbits = 1;
@@ -58,7 +64,7 @@ fn main() {
         children = vec![];
     }
 
-    println!("total orbits: {}", total_orbits);
+    total_orbits
 }
 
 fn parse_input(string: &String) -> Vec<Body> {
@@ -84,4 +90,16 @@ fn parse_input(string: &String) -> Vec<Body> {
     }
 
     bodies
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn find_total_orbits_test() {
+        let input_string = String::from("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L");
+        let mut bodies: Vec<Body> = parse_input(&input_string);
+        let total_orbits: i32 = calculate_total_orbits(&mut bodies);
+        assert_eq!(total_orbits, 42);
+    }
 }
