@@ -7,70 +7,16 @@ pub struct Body<'a> {
 
 fn main() {
     let input_string = fs::read_to_string("input.txt").expect("Error reading file!");
-    let mut bodies: Vec<Body> = parse_input(&input_string);
-    let transits: i32 = calculate_transits(&mut bodies);
+    let bodies: Vec<Body> = parse_input(&input_string);
+    let transits: i32 = calculate_transits(&bodies);
 
     println!("transits: {}", transits);
 }
 
-fn calculate_transits(bodies: &mut Vec<Body>) -> i32 {
-    let mut count = bodies.iter().count();
-    let mut transits = 0;
-    let mut orbits = 1;
-    let mut parents: Vec<Body> = vec![];
-    let mut children: Vec<Body> = vec![];
-    let mut store: Vec<Body> = vec![];
-    let mut index = count;
-
-    while index > 0 {
-        index -= 1;
-
-        if bodies[index].orbiting == "COM" {
-            let parent = Body {
-                name: bodies[index].name,
-                orbiting: bodies[index].orbiting,
-            };
-
-            parents.push(parent);
-            bodies.remove(index);
-            transits += orbits;
-            count -= 1;
-        }
-    }
-
-    while count > 0 {
-        orbits += 1;
-
-        for parent in &parents {
-            index = count;
-
-            while index > 0 {
-                index -= 1;
-
-                if bodies[index].orbiting == parent.name {
-                    let child = Body {
-                        name: bodies[index].name,
-                        orbiting: bodies[index].orbiting,
-                    };
-
-                    children.push(child);
-                    bodies.remove(index);
-                    transits += orbits;
-                    count -= 1;
-                }
-            }
-        }
-
-        store.append(&mut parents);
-        parents = children;
-        children = vec![];
-    }
-
-    store.append(&mut parents);
-
-    // Search through store repeatedly, creating a vec of refs. to parents of "YOU", and same for "SAN"
-    let mut parents_of_start: Vec<Body> = vec_of_parents(&store, "YOU");
-    let mut parents_of_end: Vec<Body> = vec_of_parents(&store, "SAN");
+fn calculate_transits(bodies: &Vec<Body>) -> i32 {
+    // Search through bodies repeatedly, creating a vec of parents of "YOU", and another for "SAN"
+    let mut parents_of_start: Vec<Body> = vec_of_parents(&bodies, "YOU");
+    let mut parents_of_end: Vec<Body> = vec_of_parents(&bodies, "SAN");
 
     // Remove all common bodies from 2 vecs, starting at COM (vec[0]).
     loop {
@@ -82,9 +28,7 @@ fn calculate_transits(bodies: &mut Vec<Body>) -> i32 {
         }
     }
 
-    transits = parents_of_start.iter().count() as i32 + parents_of_end.iter().count() as i32 - 2;
-
-    transits
+    parents_of_start.iter().count() as i32 + parents_of_end.iter().count() as i32 - 2
 }
 
 fn vec_of_parents<'a>(store: &'a Vec<Body>, start: &str) -> Vec<Body<'a>> {
