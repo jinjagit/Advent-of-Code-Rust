@@ -14,13 +14,13 @@ fn main() {
 }
 
 fn calculate_transits(bodies: &Vec<Body>) -> i32 {
-    // Search through bodies repeatedly, creating a vec of parents of "YOU", and another for "SAN"
+    // Iterate over bodies repeatedly, creating a vec of parents of "YOU", and another for "SAN"
     let mut parents_of_start: Vec<Body> = vec_of_parents(&bodies, "YOU");
     let mut parents_of_end: Vec<Body> = vec_of_parents(&bodies, "SAN");
 
     // Remove all common bodies from 2 vecs, starting at COM (vec[0]).
     loop {
-        if parents_of_start[0].name == parents_of_end[0].name { 
+        if parents_of_start[0].name == parents_of_end[0].name {
             parents_of_start.remove(0);
             parents_of_end.remove(0);
         } else {
@@ -51,7 +51,10 @@ fn vec_of_parents<'a>(store: &'a Vec<Body>, start: &str) -> Vec<Body<'a>> {
             }
         }
 
-        if orbiting == "COM" { break; }
+        if orbiting == "COM" {
+            break;
+        }
+
         name = orbiting;
     }
 
@@ -88,9 +91,10 @@ mod tests {
     use super::*;
     #[test]
     fn find_transits_test() {
-        let input_string = String::from("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L");
-        let mut bodies: Vec<Body> = parse_input(&input_string);
-        let transits: i32 = calculate_transits(&mut bodies);
-        assert_eq!(transits, 42);
+        let input_string =
+            String::from("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L\nK)YOU\nI)SAN");
+        let bodies: Vec<Body> = parse_input(&input_string);
+        let transits: i32 = calculate_transits(&bodies);
+        assert_eq!(transits, 4);
     }
 }
