@@ -49,12 +49,3 @@ COM - B - C - D - E - F
 ```
 What is the minimum number of orbital transfers required to move from the object YOU are orbiting to the object SAN is orbiting? (Between the objects they are orbiting - not between YOU and SAN.)  
 
-# My notes:
-  
-In these graphs, a parent may have many children, but _a child can only have one parent_.  
-  
-Thus, we can simply start at each of the 2 given locations, and for each location, step up the chain of parents to COM, recording each step.  
-  
-Then, we compare the 2 lists of steps to identify the elements that are shared by both lists. Identify which element is the shared element that links the two points in the shortest path (use orbits count?)  
-  
-Then we add together the steps from the shared elment we found in the previous step to each of the 2 locations. (Again, this can probably be computed using the orbits counts).  
