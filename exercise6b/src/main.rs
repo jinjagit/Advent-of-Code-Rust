@@ -2,7 +2,6 @@ use std::fs;
 
 pub struct Body<'a> {
     name: &'a str,
-    orbits: i32,
     orbiting: &'a str,
 }
 
@@ -29,7 +28,6 @@ fn calculate_transits(bodies: &mut Vec<Body>) -> i32 {
         if bodies[index].orbiting == "COM" {
             let parent = Body {
                 name: bodies[index].name,
-                orbits: orbits,
                 orbiting: bodies[index].orbiting,
             };
 
@@ -52,7 +50,6 @@ fn calculate_transits(bodies: &mut Vec<Body>) -> i32 {
                 if bodies[index].orbiting == parent.name {
                     let child = Body {
                         name: bodies[index].name,
-                        orbits: orbits,
                         orbiting: bodies[index].orbiting,
                     };
 
@@ -102,7 +99,6 @@ fn vec_of_parents<'a>(store: &'a Vec<Body>, start: &str) -> Vec<Body<'a>> {
 
                 let body_copy = Body {
                     name: body.name,
-                    orbits: body.orbits,
                     orbiting: body.orbiting,
                 };
 
@@ -134,7 +130,6 @@ fn parse_input(string: &String) -> Vec<Body> {
     for i in 0..num / 2 {
         let body = Body {
             name: input[i * 2 + 1],
-            orbits: 0,
             orbiting: input[i * 2],
         };
 
