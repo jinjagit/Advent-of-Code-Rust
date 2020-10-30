@@ -28,6 +28,7 @@ fn calculate_transits(bodies: &Vec<Body>) -> i32 {
         }
     }
 
+    // Add (count of each vec - 1) to get number of transits to travel from start to end points
     parents_of_start.iter().count() as i32 + parents_of_end.iter().count() as i32 - 2
 }
 
