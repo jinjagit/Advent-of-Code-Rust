@@ -63,10 +63,63 @@ impl InstructionSet {
 
 fn main() {
     let memory: Vec<i32> = parse_memory_from_text_file("input.txt");
-    let phases: Vec<i32> = vec![4, 3, 2, 1, 0];
-    let output: i32 = run_amplifiers(memory, phases);
+    let mut highest_output: i32 = 0;
 
-    println!("output: {:?}", output);
+    let permutations: Vec<Vec<i32>> = find_permutations(vec![0, 1, 2, 3, 4]);
+
+    for p in permutations {
+        let memory_copy = memory.clone();
+        let output: i32 = run_amplifiers(memory_copy, vec![p[0], p[1], p[2], p[3], p[4]]);
+
+        if output > highest_output {
+            highest_output = output;
+        }
+    }
+
+    println!("output: {:?}", highest_output);
+}
+
+// Non-recursive version of Heap's Algorithm, adapted from en.wikipedia.org/wiki/Heap's_algorithm
+fn find_permutations(mut array: Vec<i32>) -> Vec<Vec<i32>> {
+    let n: usize = array.iter().count();
+    let mut permutations: Vec<Vec<i32>> = vec![];
+
+    //c is an encoding of the stack state. c[k] encodes the for-loop counter for when generate(k - 1, A) is called
+    let mut c: Vec<usize> = vec![];
+
+    for _ in 0..n {
+        c.push(0);
+    }
+
+    permutations.push(array.clone());
+
+    //i acts similarly to the stack pointer
+    let mut i: usize = 0;
+    while i < n {
+        if c[i] < i {
+            if i % 2 == 0 {
+                let temp = array[0];
+                array[0] = array[i];
+                array[i] = temp;
+            } else {
+                let temp = array[c[i]];
+                array[c[i]] = array[i];
+                array[i] = temp;
+            }
+
+            permutations.push(array.clone());
+            //Swap has occurred ending the for-loop. Simulate the increment of the for-loop counter
+            c[i] += 1;
+            //Simulate recursive call reaching the base case by bringing the pointer to the base case analog in the array
+            i = 0;
+        } else {
+            //Calling generate(i+1, A) has ended as the for-loop terminated. Reset the state and simulate popping the stack by incrementing the pointer.
+            c[i] = 0;
+            i += 1;
+        }
+    }
+
+    permutations
 }
 
 fn run_amplifiers(memory: Vec<i32>, phases: Vec<i32>) -> i32 {
@@ -268,7 +321,7 @@ mod tests {
             3, 31, 3, 32, 1002, 32, 10, 32, 1001, 31, -2, 31, 1007, 31, 0, 33, 1002, 33, 7, 33, 1,
             33, 31, 31, 1, 32, 31, 31, 4, 31, 99, 0, 0, 0,
         ];
-        let phases: Vec<i32> = vec![1,0,4,3,2];
+        let phases: Vec<i32> = vec![1, 0, 4, 3, 2];
         let output: i32 = run_amplifiers(memory, phases);
         assert_eq!(output, 65210);
     }
