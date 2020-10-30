@@ -43,3 +43,13 @@ Here are some example programs:
     1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0
 ```
 Try every combination of phase settings on the amplifiers. What is the highest signal that can be sent to the thrusters?  
+
+# My notes:
+
+Each intcode instance (running on an amplifier) receives 2 inputs (in sequence):  
+inputs: 1. phase setting 2. input to intcode that then produces output  
+  
+Series of 5 phase settings is given in examples (or set sequentially to brute force all possible combinations)
+Initial input value also given.  
+  
+Task find highest final output value from series of amps by testing all possible phase settings combinations.  
