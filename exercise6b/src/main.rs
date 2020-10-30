@@ -71,6 +71,34 @@ fn calculate_total_orbits(bodies: &mut Vec<Body>) -> i32 {
 
     store.append(&mut parents);
 
+    // TODO:
+    //
+    // Search through store repeatedly, creating a vec of refs. to parents of "YOU", and same for "SAN"
+    // Use above vecs to calculate answer.
+
+    let mut parents_of_YOU: Vec<&Body> = vec![];
+    let mut name: &str = "L";
+    let mut orbiting: &str = "nil";
+
+    loop {
+        for body in &store {
+            if body.name == name {
+                orbiting = body.orbiting;
+                parents_of_YOU.push(&body);
+                break;
+            }
+        }
+
+        if orbiting == "COM" { break; }
+        name = orbiting;
+    }
+
+    for body in parents_of_YOU {
+        println!("name: {}, orbits: {}, orbiting: {}", body.name, body.orbits, body.orbiting);
+    }
+
+    
+
     total_orbits
 }
 
