@@ -76,15 +76,32 @@ fn calculate_total_orbits(bodies: &mut Vec<Body>) -> i32 {
     // Search through store repeatedly, creating a vec of refs. to parents of "YOU", and same for "SAN"
     // Use above vecs to calculate answer.
 
-    let mut parents_of_YOU: Vec<&Body> = vec![];
-    let mut name: &str = "L";
+    let mut parents_of_start: Vec<Body> = vec_of_parents(&store, "L");
+
+    for body in parents_of_start {
+        println!("name: {}, orbits: {}, orbiting: {}", body.name, body.orbits, body.orbiting);
+    }
+
+    total_orbits
+}
+
+fn vec_of_parents<'a>(store: &'a Vec<Body>, start: &str) -> Vec<Body<'a>> {
+    let mut parents: Vec<Body> = vec![];
+    let mut name: &str = start;
     let mut orbiting: &str = "nil";
 
     loop {
-        for body in &store {
+        for body in store {
             if body.name == name {
                 orbiting = body.orbiting;
-                parents_of_YOU.push(&body);
+
+                let body_copy = Body {
+                    name: body.name,
+                    orbits: body.orbits,
+                    orbiting: body.orbiting,
+                };
+
+                parents.push(body_copy);
                 break;
             }
         }
@@ -93,13 +110,7 @@ fn calculate_total_orbits(bodies: &mut Vec<Body>) -> i32 {
         name = orbiting;
     }
 
-    for body in parents_of_YOU {
-        println!("name: {}, orbits: {}, orbiting: {}", body.name, body.orbits, body.orbiting);
-    }
-
-    
-
-    total_orbits
+    parents
 }
 
 fn parse_input(string: &String) -> Vec<Body> {
