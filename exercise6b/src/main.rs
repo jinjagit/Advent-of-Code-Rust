@@ -9,14 +9,14 @@ pub struct Body<'a> {
 fn main() {
     let input_string = fs::read_to_string("input.txt").expect("Error reading file!");
     let mut bodies: Vec<Body> = parse_input(&input_string);
-    let total_orbits: i32 = calculate_total_orbits(&mut bodies);
+    let transits: i32 = calculate_transits(&mut bodies);
 
-    println!("total orbits: {}", total_orbits);
+    println!("transits: {}", transits);
 }
 
-fn calculate_total_orbits(bodies: &mut Vec<Body>) -> i32 {
+fn calculate_transits(bodies: &mut Vec<Body>) -> i32 {
     let mut count = bodies.iter().count();
-    let mut total_orbits = 0;
+    let mut transits = 0;
     let mut orbits = 1;
     let mut parents: Vec<Body> = vec![];
     let mut children: Vec<Body> = vec![];
@@ -35,7 +35,7 @@ fn calculate_total_orbits(bodies: &mut Vec<Body>) -> i32 {
 
             parents.push(parent);
             bodies.remove(index);
-            total_orbits += orbits;
+            transits += orbits;
             count -= 1;
         }
     }
@@ -58,7 +58,7 @@ fn calculate_total_orbits(bodies: &mut Vec<Body>) -> i32 {
 
                     children.push(child);
                     bodies.remove(index);
-                    total_orbits += orbits;
+                    transits += orbits;
                     count -= 1;
                 }
             }
@@ -71,18 +71,23 @@ fn calculate_total_orbits(bodies: &mut Vec<Body>) -> i32 {
 
     store.append(&mut parents);
 
-    // TODO:
-    //
     // Search through store repeatedly, creating a vec of refs. to parents of "YOU", and same for "SAN"
-    // Use above vecs to calculate answer.
+    let mut parents_of_start: Vec<Body> = vec_of_parents(&store, "YOU");
+    let mut parents_of_end: Vec<Body> = vec_of_parents(&store, "SAN");
 
-    let mut parents_of_start: Vec<Body> = vec_of_parents(&store, "L");
-
-    for body in parents_of_start {
-        println!("name: {}, orbits: {}, orbiting: {}", body.name, body.orbits, body.orbiting);
+    // Remove all common bodies from 2 vecs, starting at COM (vec[0]).
+    loop {
+        if parents_of_start[0].name == parents_of_end[0].name { 
+            parents_of_start.remove(0);
+            parents_of_end.remove(0);
+        } else {
+            break;
+        }
     }
 
-    total_orbits
+    transits = parents_of_start.iter().count() as i32 + parents_of_end.iter().count() as i32 - 2;
+
+    transits
 }
 
 fn vec_of_parents<'a>(store: &'a Vec<Body>, start: &str) -> Vec<Body<'a>> {
@@ -110,7 +115,7 @@ fn vec_of_parents<'a>(store: &'a Vec<Body>, start: &str) -> Vec<Body<'a>> {
         name = orbiting;
     }
 
-    parents
+    return parents.into_iter().rev().collect();
 }
 
 fn parse_input(string: &String) -> Vec<Body> {
@@ -143,10 +148,10 @@ fn parse_input(string: &String) -> Vec<Body> {
 mod tests {
     use super::*;
     #[test]
-    fn find_total_orbits_test() {
+    fn find_transits_test() {
         let input_string = String::from("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L");
         let mut bodies: Vec<Body> = parse_input(&input_string);
-        let total_orbits: i32 = calculate_total_orbits(&mut bodies);
-        assert_eq!(total_orbits, 42);
+        let transits: i32 = calculate_transits(&mut bodies);
+        assert_eq!(transits, 42);
     }
 }
