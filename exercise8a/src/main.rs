@@ -5,19 +5,19 @@ fn main() {
     let layers: Vec<Vec<u8>> = parse_layers_from_digits(digits, 25, 6);
 
     let mut count: i32 = -1;
-    let mut layer_num: usize = 0; // layer with fewest 0 digits
+    let mut layer: usize = 0; // layer with fewest 0 digits
 
     for i in 0..layers.iter().count() {
         let zeroes: i32 = digit_count(layers[i].clone(), 0) as i32;
 
         if count == -1 || zeroes < count {
             count = zeroes;
-            layer_num = i;
+            layer = i;
         }
     }
 
     let result: u32 =
-        digit_count(layers[layer_num].clone(), 1) * digit_count(layers[layer_num].clone(), 2);
+        digit_count(layers[layer].clone(), 1) * digit_count(layers[layer].clone(), 2);
 
     println!("result: {}", result);
 }
