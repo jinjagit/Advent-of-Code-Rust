@@ -84,7 +84,7 @@ fn find_permutations(mut array: Vec<i32>) -> Vec<Vec<i32>> {
     let n: usize = array.iter().count();
     let mut permutations: Vec<Vec<i32>> = vec![];
 
-    //c is an encoding of the stack state. c[k] encodes the for-loop counter for when generate(k - 1, A) is called
+    //c is an encoding of the stack state.
     let mut c: Vec<usize> = vec![];
 
     for _ in 0..n {
@@ -113,7 +113,7 @@ fn find_permutations(mut array: Vec<i32>) -> Vec<Vec<i32>> {
             //Simulate recursive call reaching the base case by bringing the pointer to the base case analog in the array
             i = 0;
         } else {
-            //Calling generate(i+1, A) has ended as the for-loop terminated. Reset the state and simulate popping the stack by incrementing the pointer.
+            //The 'for-loop' terminated. Reset the state and simulate popping the stack by incrementing the pointer.
             c[i] = 0;
             i += 1;
         }
