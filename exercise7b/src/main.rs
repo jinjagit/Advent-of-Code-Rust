@@ -27,7 +27,7 @@ impl InstructionSet {
         let digit_chars: Vec<char> = raw.to_string().chars().collect::<Vec<_>>();
         let digits: Vec<u8> = digit_chars
             .iter()
-            .map(|c| *c as u8 - 48) // -48 = integer represented by ascii char value
+            .map(|c| *c as u8 - 48) // -48 = integer represented by ascii char value.
             .collect::<Vec<u8>>();
         let count: usize = digits.iter().count();
 
@@ -64,8 +64,7 @@ impl InstructionSet {
 fn main() {
     let memory: Vec<i32> = parse_memory_from_text_file("input.txt");
     let mut highest_output: i32 = 0;
-
-    let permutations: Vec<Vec<i32>> = find_permutations(vec![0, 1, 2, 3, 4]);
+    let permutations: Vec<Vec<i32>> = find_permutations(vec![5, 6, 7, 8, 9]);
 
     for p in permutations {
         let output: i32 = run_amplifiers(memory.clone(), vec![p[0], p[1], p[2], p[3], p[4]]);
@@ -92,7 +91,7 @@ fn find_permutations(mut array: Vec<i32>) -> Vec<Vec<i32>> {
 
     permutations.push(array.clone());
 
-    //i acts similarly to the stack pointer
+    //i acts similarly to the stack pointer.
     let mut i: usize = 0;
     while i < n {
         if c[i] < i {
@@ -107,9 +106,9 @@ fn find_permutations(mut array: Vec<i32>) -> Vec<Vec<i32>> {
             }
 
             permutations.push(array.clone());
-            //Swap has occurred ending the for-loop. Simulate the increment of the for-loop counter
+            //Swap has occurred ending the for-loop. Simulate the increment of the for-loop counter.
             c[i] += 1;
-            //Simulate recursive call reaching the base case by bringing the pointer to the base case analog in the array
+            //Simulate recursive call reaching the base case by bringing the pointer to the base case analog in the array.
             i = 0;
         } else {
             //The 'for-loop' terminated. Reset the state and simulate popping the stack by incrementing the pointer.
@@ -122,22 +121,54 @@ fn find_permutations(mut array: Vec<i32>) -> Vec<Vec<i32>> {
 }
 
 fn run_amplifiers(memory: Vec<i32>, phases: Vec<i32>) -> i32 {
+    // Initialize 5 copies of memory state:
+    let mut memories: Vec<Vec<i32>> = vec![];
+    for _ in 0..5 {
+        memories.push(memory.clone());
+    }
+
+    let mut pointers: Vec<usize> = vec![0, 0, 0, 0, 0];
+    let mut terminated: bool = false;
+    let mut loop_n: i32 = 0;
     let mut input: i32 = 0;
     let mut output: i32 = 0;
 
-    for i in 0..5 {
-        output = run_program(memory.clone(), input, phases[i]);
-        input = output;
+    loop {
+        for i in 0..5 {
+            if loop_n == 0 {
+                input = phases[i];
+            } else if loop_n == 1 && i == 0 {
+                input = 0;
+            }
+
+            let result = run_program(memories[i].clone(), input, pointers[i]);
+
+            memories[i] = result[0].clone();
+            pointers[i] = result[1][0] as usize;
+            output = result[1][1];
+
+            if i == 4 && result[1][2] == 1 {
+                terminated = true;
+            }
+
+            input = output;
+        }
+
+        if terminated == true {
+            break;
+        }
+
+        loop_n += 1;
     }
 
     output
 }
 
-fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> i32 {
-    let mut pointer: usize = 0;
+fn run_program(mut memory: Vec<i32>, input: i32, mut pointer: usize) -> Vec<Vec<i32>> {
     let mut intcode: InstructionSet = Default::default();
     let mut output: i32 = 0;
-    let mut phase_set: bool = false;
+    let mut input_used: bool = false;
+    let mut terminated: i32 = 0;
 
     loop {
         intcode.new_raw_code(memory[pointer]);
@@ -157,16 +188,16 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> i32 {
             memory[address] = param_1 * param_2;
             pointer += 4;
         } else if intcode.opcode == 3 {
-            let address = memory[pointer + 1] as usize;
-
-            if phase_set == false {
-                memory[address] = phase;
-                phase_set = true;
+            // Break here if input has already been used once (consumed).
+            if input_used == true {
+                break;
             } else {
-                memory[address] = input;
-            }
+                let address = memory[pointer + 1] as usize;
 
-            pointer += 2;
+                memory[address] = input;
+                pointer += 2;
+                input_used = true;
+            }
         } else if intcode.opcode == 4 {
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &memory);
 
@@ -215,11 +246,12 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> i32 {
 
             pointer += 4;
         } else if intcode.opcode == 99 {
+            terminated = 1;
             break;
         }
     }
 
-    output
+    vec![memory.clone(), vec![pointer as i32, output, terminated]]
 }
 
 // Returns either the value in 'memory' at 'pointer' index, or the value at the 'memory' index given
@@ -300,6 +332,8 @@ mod tests {
 
     #[test]
     fn run_amplifiers_test() {
+        // Tests of sequential run mode (when using phases = permutations of 0, 1, 2, 3, 4).
+
         let memory: Vec<i32> = vec![
             3, 15, 3, 16, 1002, 16, 10, 16, 1, 16, 15, 15, 4, 15, 99, 0, 0,
         ];
@@ -322,5 +356,24 @@ mod tests {
         let phases: Vec<i32> = vec![1, 0, 4, 3, 2];
         let output: i32 = run_amplifiers(memory, phases);
         assert_eq!(output, 65210);
+
+        // Tests of feedback loop mode (when using phases = permutations of 5, 6, 7, 8, 9).
+
+        let memory: Vec<i32> = vec![
+            3, 26, 1001, 26, -4, 26, 3, 27, 1002, 27, 2, 27, 1, 27, 26, 27, 4, 27, 1001, 28, -1,
+            28, 1005, 28, 6, 99, 0, 0, 5,
+        ];
+        let phases: Vec<i32> = vec![9, 8, 7, 6, 5];
+        let output: i32 = run_amplifiers(memory, phases);
+        assert_eq!(output, 139629729);
+
+        let memory: Vec<i32> = vec![
+            3, 52, 1001, 52, -5, 52, 3, 53, 1, 52, 56, 54, 1007, 54, 5, 55, 1005, 55, 26, 1001, 54,
+            -5, 54, 1105, 1, 12, 1, 53, 54, 53, 1008, 54, 0, 55, 1001, 55, 1, 55, 2, 53, 55, 53, 4,
+            53, 1001, 56, -1, 56, 1005, 56, 6, 99, 0, 0, 0, 0, 10,
+        ];
+        let phases: Vec<i32> = vec![9, 7, 8, 5, 6];
+        let output: i32 = run_amplifiers(memory, phases);
+        assert_eq!(output, 18216);
     }
 }

@@ -37,3 +37,11 @@ Here are some example programs:
 Try every combination of the new phase settings on the amplifier feedback loop. What is the highest signal that can be sent to the thrusters?  
   
 Although it hasn't changed, you can still get your puzzle input.  
+
+# My Notes:
+
+The tricky part for me was realizing that each amp's instance of code in its 'memory' should be paused when it hits a 2nd 'input' opcode in sequence (i.e. it consumes an input, then pauses when it requires a fresh input).  
+  
+For quite a while, I was pausing the code when an _output_ was generated and simply passing the output to the next amp immediately.  
+  
+  This meant that I was not running any code between the output opcode and the next encounter with an input opcode, which could possibly (and clearly, sometimes, in fact) change the state of other memory registers _before_ pausing, in ways that might differ or not occur if not run before receiving the next input. Also, the input itself might change the state of a register that would be used between the last output and the next input in my former, erroneous, approach.
