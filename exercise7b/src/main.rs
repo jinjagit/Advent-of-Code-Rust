@@ -83,11 +83,7 @@ fn find_permutations(mut array: Vec<i32>) -> Vec<Vec<i32>> {
     let mut permutations: Vec<Vec<i32>> = vec![];
 
     //c is an encoding of the stack state.
-    let mut c: Vec<usize> = vec![];
-
-    for _ in 0..n {
-        c.push(0);
-    }
+    let mut c: Vec<usize> = vec![0, 0, 0, 0, 0];
 
     permutations.push(array.clone());
 
