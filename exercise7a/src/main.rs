@@ -68,8 +68,7 @@ fn main() {
     let permutations: Vec<Vec<i32>> = find_permutations(vec![0, 1, 2, 3, 4]);
 
     for p in permutations {
-        let memory_copy = memory.clone();
-        let output: i32 = run_amplifiers(memory_copy, vec![p[0], p[1], p[2], p[3], p[4]]);
+        let output: i32 = run_amplifiers(memory.clone(), vec![p[0], p[1], p[2], p[3], p[4]]);
 
         if output > highest_output {
             highest_output = output;
@@ -127,8 +126,7 @@ fn run_amplifiers(memory: Vec<i32>, phases: Vec<i32>) -> i32 {
     let mut output: i32 = 0;
 
     for i in 0..5 {
-        let memory_copy = memory.clone();
-        output = run_program(memory_copy, input, phases[i]);
+        output = run_program(memory.clone(), input, phases[i]);
         input = output;
     }
 
