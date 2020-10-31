@@ -329,6 +329,9 @@ mod tests {
     #[test]
     fn run_amplifiers_test() {
         // Tests of sequential run mode (when using phases = permutations of 0, 1, 2, 3, 4).
+        // Actually still loop mode, but only loops twice:
+        //  1. Input phase to each amp and run till next input request, then pause
+        //  2. Input 0 to amp0, and chain output->input. Amp4 will hit exit '99' to break 2nd loop.
 
         let memory: Vec<i32> = vec![
             3, 15, 3, 16, 1002, 16, 10, 16, 1, 16, 15, 15, 4, 15, 99, 0, 0,
