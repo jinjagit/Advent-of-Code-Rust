@@ -239,6 +239,10 @@ mod tests {
         intcode.new_raw_code(711003);
         assert_eq!(intcode.param1_mode, 0);
         assert_eq!(intcode.param2_mode, 1);
+
+        intcode.new_raw_code(712103);
+        assert_eq!(intcode.param1_mode, 1);
+        assert_eq!(intcode.param2_mode, 2);
     }
 
     #[test]
