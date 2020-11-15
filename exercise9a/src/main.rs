@@ -44,7 +44,7 @@ impl InstructionSet {
 
         // Parse paramater modes, if specified in raw instruction-set code integer.
         let check_param_mode = |n: u8| {
-            if n != 0 && n != 1 { // TODO: Include valid param. mode == 2 (if n > 2)
+            if n > 2 { // Parameter mode can be 0, 1 or 2.
                 panic!("Error! Unable to parse valid parameter mode from {}", raw);
             }
         };
@@ -229,13 +229,13 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> i32 {
 }
 
 // Returns either the value in 'memory' at 'pointer' index, or the value at the 'memory' index given
-// by the value in 'memory' at 'pointer' index, depending on the value of 'param_mode' (0 or 1).
+// by the value in 'memory' at 'pointer' index, depending on the value of 'param_mode' (1 or 0).
 fn get_value(param_mode: &u8, pointer: &usize, memory: &Vec<i32>) -> i32 {
     let val_or_posn = memory[*pointer];
 
-    if param_mode == &0 {
+    if param_mode == &0 { // Postion mode
         return memory[val_or_posn as usize] as i32;
-    } else {
+    } else { // Immediate mode
         return val_or_posn as i32;
     }
 }
