@@ -1,5 +1,8 @@
 use std::fs;
 
+pub struct RelativeBase {
+    value: i32,
+}
 pub struct InstructionSet {
     opcode: u8,
     param1_mode: u8,
@@ -89,6 +92,9 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> i32 {
     let mut intcode: InstructionSet = Default::default();
     let mut output: i32 = 0;
     let mut phase_set: bool = false;
+    let mut rel_base = RelativeBase {
+        value: 0,
+    };
 
     loop {
         intcode.new_raw_code(memory[pointer]);
@@ -180,8 +186,10 @@ fn get_value(param_mode: &u8, pointer: &usize, memory: &Vec<i32>) -> i32 {
 
     if param_mode == &0 { // Postion mode
         return memory[val_or_posn as usize] as i32;
-    } else { // Immediate mode
+    } else if param_mode == &1 { // Immediate mode
         return val_or_posn as i32;
+    } else { // Relative mode
+        999 // TODO: replace this placeholder value
     }
 }
 
