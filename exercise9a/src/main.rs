@@ -68,8 +68,6 @@ fn main() {
     println!("memory: {:?}", memory);
     let output = "I do nothing";
 
-    // TODO: Create 'ram' space by adding elements (each set to zero) to input aray.
-
     // TODO: Run program with phase = 1, input = 0, for exercise, as phase is really the 1st input.
 
     println!("output: {:?}", output);
@@ -84,59 +82,6 @@ fn add_ram(raw_intcode: &Vec<i32>) -> Vec<i32> {
     memory.append(&mut ram);
 
     memory
-}
-
-// TODO: Remove this function, as it will not be used.
-// Non-recursive version of Heap's Algorithm, adapted from en.wikipedia.org/wiki/Heap's_algorithm
-fn find_permutations(mut array: Vec<i32>) -> Vec<Vec<i32>> {
-    let n: usize = array.iter().count();
-    let mut permutations: Vec<Vec<i32>> = vec![];
-
-    //c is an encoding of the stack state.
-    let mut c: Vec<usize> = vec![0, 0, 0, 0, 0];
-
-    permutations.push(array.clone());
-
-    //i acts similarly to the stack pointer
-    let mut i: usize = 0;
-    while i < n {
-        if c[i] < i {
-            if i % 2 == 0 {
-                let temp = array[0];
-                array[0] = array[i];
-                array[i] = temp;
-            } else {
-                let temp = array[c[i]];
-                array[c[i]] = array[i];
-                array[i] = temp;
-            }
-
-            permutations.push(array.clone());
-            //Swap has occurred ending the for-loop. Simulate the increment of the for-loop counter
-            c[i] += 1;
-            //Simulate recursive call reaching the base case by bringing the pointer to the base case analog in the array
-            i = 0;
-        } else {
-            //The 'for-loop' terminated. Reset the state and simulate popping the stack by incrementing the pointer.
-            c[i] = 0;
-            i += 1;
-        }
-    }
-
-    permutations
-}
-
-// TODO: remove this function, as it will not be used.
-fn run_amplifiers(memory: Vec<i32>, phases: Vec<i32>) -> i32 {
-    let mut input: i32 = 0;
-    let mut output: i32 = 0;
-
-    for i in 0..5 {
-        output = run_program(memory.clone(), input, phases[i]);
-        input = output;
-    }
-
-    output
 }
 
 fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> i32 {
@@ -306,27 +251,27 @@ mod tests {
 
     #[test]
     fn run_amplifiers_test() {
-        let memory: Vec<i32> = vec![
-            3, 15, 3, 16, 1002, 16, 10, 16, 1, 16, 15, 15, 4, 15, 99, 0, 0,
-        ];
-        let phases: Vec<i32> = vec![4, 3, 2, 1, 0];
-        let output: i32 = run_amplifiers(memory, phases);
-        assert_eq!(output, 43210);
+        // let memory: Vec<i32> = vec![
+        //     3, 15, 3, 16, 1002, 16, 10, 16, 1, 16, 15, 15, 4, 15, 99, 0, 0,
+        // ];
+        // let phases: Vec<i32> = vec![4, 3, 2, 1, 0];
+        // let output: i32 = run_amplifiers(memory, phases);
+        // assert_eq!(output, 43210);
 
-        let memory: Vec<i32> = vec![
-            3, 23, 3, 24, 1002, 24, 10, 24, 1002, 23, -1, 23, 101, 5, 23, 23, 1, 24, 23, 23, 4, 23,
-            99, 0, 0,
-        ];
-        let phases: Vec<i32> = vec![0, 1, 2, 3, 4];
-        let output: i32 = run_amplifiers(memory, phases);
-        assert_eq!(output, 54321);
+        // let memory: Vec<i32> = vec![
+        //     3, 23, 3, 24, 1002, 24, 10, 24, 1002, 23, -1, 23, 101, 5, 23, 23, 1, 24, 23, 23, 4, 23,
+        //     99, 0, 0,
+        // ];
+        // let phases: Vec<i32> = vec![0, 1, 2, 3, 4];
+        // let output: i32 = run_amplifiers(memory, phases);
+        // assert_eq!(output, 54321);
 
-        let memory: Vec<i32> = vec![
-            3, 31, 3, 32, 1002, 32, 10, 32, 1001, 31, -2, 31, 1007, 31, 0, 33, 1002, 33, 7, 33, 1,
-            33, 31, 31, 1, 32, 31, 31, 4, 31, 99, 0, 0, 0,
-        ];
-        let phases: Vec<i32> = vec![1, 0, 4, 3, 2];
-        let output: i32 = run_amplifiers(memory, phases);
-        assert_eq!(output, 65210);
+        // let memory: Vec<i32> = vec![
+        //     3, 31, 3, 32, 1002, 32, 10, 32, 1001, 31, -2, 31, 1007, 31, 0, 33, 1002, 33, 7, 33, 1,
+        //     33, 31, 31, 1, 32, 31, 31, 4, 31, 99, 0, 0, 0,
+        // ];
+        // let phases: Vec<i32> = vec![1, 0, 4, 3, 2];
+        // let output: i32 = run_amplifiers(memory, phases);
+        // assert_eq!(output, 65210);
     }
 }
