@@ -62,25 +62,28 @@ impl InstructionSet {
 }
 
 fn main() {
-    let memory: Vec<i32> = parse_memory_from_text_file("input.txt");
-    let mut highest_output: i32 = 0;
+    let raw_intcode: Vec<i32> = parse_memory_from_text_file("input.txt");
+    let memory: Vec<i32> = add_ram(&raw_intcode);
 
-    // TODO: Remove permutations & run amplifiers instructions. Just need to 'run program'.
-    let permutations: Vec<Vec<i32>> = find_permutations(vec![0, 1, 2, 3, 4]);
-
-    for p in permutations {
-        let output: i32 = run_amplifiers(memory.clone(), vec![p[0], p[1], p[2], p[3], p[4]]);
-
-        if output > highest_output {
-            highest_output = output;
-        }
-    }
+    println!("memory: {:?}", memory);
+    let output = "I do nothing";
 
     // TODO: Create 'ram' space by adding elements (each set to zero) to input aray.
 
     // TODO: Run program with phase = 1, input = 0, for exercise, as phase is really the 1st input.
 
-    println!("output: {:?}", highest_output);
+    println!("output: {:?}", output);
+}
+
+// Double the length of the input vec by appending a vec of zeroes
+// TODO: Add error handling for 'Index out range, that prints the index value used"
+fn add_ram(raw_intcode: &Vec<i32>) -> Vec<i32> {
+    let mut memory = raw_intcode.clone();
+    let mut ram: Vec<i32> = vec![0; memory.iter().count()];
+
+    memory.append(&mut ram);
+
+    memory
 }
 
 // TODO: Remove this function, as it will not be used.
