@@ -89,10 +89,10 @@ fn add_ram(raw_intcode: &Vec<i32>) -> Vec<i32> {
     memory
 }
 
-fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> i32 {
+fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> Vec<i32> {
     let mut pointer: usize = 0;
     let mut intcode: InstructionSet = Default::default();
-    let mut output: i32 = 0;
+    let mut output: Vec<i32> = vec![];
     let mut phase_set: bool = false;
     let mut rel_base = RelativeBase {
         value: 0,
@@ -101,7 +101,11 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> i32 {
     loop {
         intcode.new_raw_code(memory[pointer]);
 
-        if intcode.opcode == 1 {
+        println!("loop start:");
+        println!("  opcode: {}", intcode.opcode);
+
+
+        if intcode.opcode == 1 { // Add p1 & p2, and write to p3
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
             let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &mut rel_base, &memory);
             let address = memory[pointer + 3] as usize;
@@ -127,13 +131,13 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> i32 {
 
             pointer += 2;
         } else if intcode.opcode == 4 { // output (write to output vec)
-            println!("opcode 4:");
+            println!("opcode 4 (output):");
 
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
 
             println!("  param_1: {}", param_1);
 
-            output = param_1;
+            output.push(param_1);
             pointer += 2;
         } else if intcode.opcode == 5 {
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
@@ -178,7 +182,7 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> i32 {
 
             pointer += 4;
         } else if intcode.opcode == 9 {
-            println!("opcode 9:");
+            println!("opcode 9 (add to rel_base):");
 
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
 
