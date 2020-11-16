@@ -35,9 +35,9 @@ impl InstructionSet {
         let count: usize = digits.iter().count();
 
         // Parse opcode.
-        if count == 1 && (digits[0] > 0 && digits[0] < 9) {
+        if count == 1 && (digits[0] > 0 && digits[0] < 10) {
             self.opcode = digits[0];
-        } else if digits[count - 2] == 0 && (digits[count - 1] > 0 && digits[count - 1] < 9) {
+        } else if digits[count - 2] == 0 && (digits[count - 1] > 0 && digits[count - 1] < 10) {
             self.opcode = digits[count - 1];
         } else if digits[count - 2] == 9 && digits[count - 1] == 9 {
             self.opcode = 99;
@@ -68,7 +68,7 @@ fn main() {
     let raw_intcode: Vec<i32> = parse_memory_from_text_file("input.txt");
     let memory: Vec<i32> = add_ram(&raw_intcode);
 
-    println!("memory: {:?}", memory);
+    // println!("memory: {:?}", memory);
     //let output = "I do nothing";
 
     // TODO: Run program with phase = 1, input = 0, for exercise, as phase is really the 1st input.
@@ -78,11 +78,11 @@ fn main() {
     println!("output: {:?}", output);
 }
 
-// Double the length of the input vec by appending a vec of zeroes
+// Increase the length of the input vec by appending a vec of zeroes (? how many OR set as indices increase?)
 // TODO: Add error handling for 'Index out range, that prints the index value used"
 fn add_ram(raw_intcode: &Vec<i32>) -> Vec<i32> {
     let mut memory = raw_intcode.clone();
-    let mut ram: Vec<i32> = vec![0; memory.iter().count()];
+    let mut ram: Vec<i32> = vec![0; 1000000];
 
     memory.append(&mut ram);
 
@@ -126,8 +126,12 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> i32 {
             }
 
             pointer += 2;
-        } else if intcode.opcode == 4 {
+        } else if intcode.opcode == 4 { // output (write to output vec)
+            println!("opcode 4:");
+
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
+
+            println!("  param_1: {}", param_1);
 
             output = param_1;
             pointer += 2;
@@ -173,9 +177,21 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> i32 {
             }
 
             pointer += 4;
-        } else if intcode.opcode == 99 {
+        } else if intcode.opcode == 9 {
+            println!("opcode 9:");
+
+            let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
+
+            println!("  param_1: {}", param_1);
+
+            rel_base.value = rel_base.value + param_1;
+            pointer += 2;
+        }else if intcode.opcode == 99 {
             break;
         }
+
+        println!("loop end:");
+        println!("  value: {}", rel_base.value);
     }
 
     output
@@ -191,8 +207,8 @@ fn get_value(param_mode: &u8, pointer: &usize, rel_base: &mut RelativeBase, memo
     } else if param_mode == &1 { // Immediate mode
         return val_or_posn as i32;
     } else { // Relative mode
-        let param = memory[val_or_posn as usize] as i32;
-        rel_base.value = rel_base.value + param;
+        //let param = memory[val_or_posn as usize] as i32;
+        rel_base.value = rel_base.value + val_or_posn;
         return memory[rel_base.value as usize] as i32;
     }
 }
