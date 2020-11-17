@@ -79,6 +79,17 @@ fn main() {
     println!("output: {:?}", output);
 }
 
+fn parse_memory_from_text_file(filename: &str) -> Vec<i64> {
+    let memory_string: String = fs::read_to_string(filename).expect("Error reading file!");
+    let split_input: Vec<&str> = memory_string.split(',').collect();
+    let memory: Vec<i64> = split_input
+        .iter()
+        .map(|s| s.parse::<i64>().unwrap())
+        .collect::<Vec<i64>>();
+
+    memory
+}
+
 // Increase the length of the input vec by appending a vec of zeroes.
 fn add_ram(raw_intcode: &Vec<i64>) -> Vec<i64> {
     let mut memory = raw_intcode.clone();
@@ -207,17 +218,6 @@ fn get_value(param_mode: &u8, pointer: &usize, rel_base: &i64, memory: &Vec<i64>
     } else {                      // Relative mode
         return memory[(rel_base + val_or_posn) as usize] as i64;
     }
-}
-
-fn parse_memory_from_text_file(filename: &str) -> Vec<i64> {
-    let memory_string: String = fs::read_to_string(filename).expect("Error reading file!");
-    let split_input: Vec<&str> = memory_string.split(',').collect();
-    let memory: Vec<i64> = split_input
-        .iter()
-        .map(|s| s.parse::<i64>().unwrap())
-        .collect::<Vec<i64>>();
-
-    memory
 }
 
 #[cfg(test)]
