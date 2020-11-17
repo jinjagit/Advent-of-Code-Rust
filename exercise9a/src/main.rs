@@ -1,4 +1,5 @@
 use std::fs;
+use colored::*;
 
 pub struct RelativeBase {
     value: i32,
@@ -102,7 +103,7 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> Vec<i32> {
         intcode.new_raw_code(memory[pointer]);
 
         println!("loop start:");
-        println!("  opcode: {}", intcode.opcode);
+        println!("{} {} ", "opcode: ".cyan(), intcode.opcode);
 
 
         if intcode.opcode == 1 { // Add p1 & p2, and write to p3
