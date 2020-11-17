@@ -295,12 +295,20 @@ mod tests {
         let output = run_program(memory, 0, 1);
         assert_eq!(output, intcode_copy);
 
-        // Example 1: "... should output a 16-digit number."
+        // Example 2: "... should output a 16-digit number."
         let raw_intcode: Vec<i64> = vec![
             1102, 34915192, 34915192, 7, 4, 7, 99, 0,
         ];
         let memory: Vec<i64> = add_ram(&raw_intcode);
         let output = run_program(memory, 0, 1);
         assert_eq!(output, vec![1219070632396864]);
+
+        // Example 3: "... should output the large number in the middle."
+        let raw_intcode: Vec<i64> = vec![
+            104, 1125899906842624, 99,
+        ];
+        let memory: Vec<i64> = add_ram(&raw_intcode);
+        let output = run_program(memory, 0, 1);
+        assert_eq!(output, vec![1125899906842624]);
     }
 }
