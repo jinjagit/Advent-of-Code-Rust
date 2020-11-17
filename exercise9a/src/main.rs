@@ -114,21 +114,21 @@ fn run_program(mut memory: Vec<i64>, input: i64, phase: i64) -> Vec<i64> {
         println!("{} ", "loop start:".cyan());
         println!("{} {} ", "  opcode:".cyan(), intcode.opcode);
 
-        if intcode.opcode == 1 { // Add p1 & p2, and write to p3
+        if intcode.opcode == 1 { // Add p1 & p2, and write to address indicated by p3 (depending on mode)
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
             let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &mut rel_base, &memory);
-            let address = memory[pointer + 3] as usize;
+            let address = get_address(&intcode.param3_mode, &(pointer + 3), &mut rel_base, &memory);
 
             memory[address] = param_1 + param_2;
             pointer += 4;
-        } else if intcode.opcode == 2 { // Mulitply p1 & p2, and write to p3
+        } else if intcode.opcode == 2 { // Mulitply p1 & p2, and write to address indicated by p3 (depending on mode)
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
             let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &mut rel_base, &memory);
             let address = memory[pointer + 3] as usize;
 
             memory[address] = param_1 * param_2;
             pointer += 4;
-        } else if intcode.opcode == 3 { // Input
+        } else if intcode.opcode == 3 { // Input at address indicated by p1 (depending on mode)
             let address = memory[pointer + 1] as usize;
 
             if phase_set == false {
@@ -148,7 +148,7 @@ fn run_program(mut memory: Vec<i64>, input: i64, phase: i64) -> Vec<i64> {
 
             output.push(param_1);
             pointer += 2;
-        } else if intcode.opcode == 5 { // If p1 != 0 ? set pointer to p2
+        } else if intcode.opcode == 5 { // If p1 != 0 ? set pointer to p2 (or change rel. base? if mode == 2)
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
 
             if param_1 != 0 {
@@ -157,7 +157,7 @@ fn run_program(mut memory: Vec<i64>, input: i64, phase: i64) -> Vec<i64> {
             } else {
                 pointer += 3
             }
-        } else if intcode.opcode == 6 { // If p1 == 0 ? set pointer to p2 
+        } else if intcode.opcode == 6 { // If p1 == 0 ? set pointer to p2 (or change rel. base? if mode == 2)
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
 
             if param_1 == 0 {
@@ -166,7 +166,7 @@ fn run_program(mut memory: Vec<i64>, input: i64, phase: i64) -> Vec<i64> {
             } else {
                 pointer += 3
             }
-        } else if intcode.opcode == 7 { // If p1 < p2 ? write 1 : write 0
+        } else if intcode.opcode == 7 { // If p1 < p2 ? write 1 : write 0 => to address indicated by p3 (depending on mode)
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
             let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &mut rel_base, &memory);
             let address = memory[pointer + 3] as usize;
@@ -178,7 +178,7 @@ fn run_program(mut memory: Vec<i64>, input: i64, phase: i64) -> Vec<i64> {
             }
 
             pointer += 4;
-        } else if intcode.opcode == 8 { // If p1 == p2 ? write 1 : write 0
+        } else if intcode.opcode == 8 { // If p1 == p2 ? write 1 : write 0 => to address indicated by p3 (depending on mode)
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
             let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &mut rel_base, &memory);
             let address = memory[pointer + 3] as usize;
@@ -208,6 +208,14 @@ fn run_program(mut memory: Vec<i64>, input: i64, phase: i64) -> Vec<i64> {
     }
 
     output
+}
+
+fn get_address(param_mode: &u8, pointer: &usize, rel_base: &mut RelativeBase, memory: &Vec<i64>) -> usize {
+    if param_mode == &2 {
+        return (rel_base.value + memory[*pointer]) as usize;
+    } else {
+        return memory[*pointer] as usize;
+    }
 }
 
 // Returns either the value in 'memory' at 'pointer' index, or the value at the 'memory' index given
