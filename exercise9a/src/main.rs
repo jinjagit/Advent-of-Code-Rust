@@ -2,7 +2,7 @@ use std::fs;
 use colored::*;
 
 pub struct RelativeBase {
-    value: i32,
+    value: i64,
 }
 pub struct InstructionSet {
     opcode: u8,
@@ -21,7 +21,7 @@ impl Default for InstructionSet {
 }
 
 impl InstructionSet {
-    fn new_raw_code(&mut self, raw: i32) {
+    fn new_raw_code(&mut self, raw: i64) {
         // Reset default values.
         self.opcode = 0;
         self.param1_mode = 0;
@@ -66,8 +66,8 @@ impl InstructionSet {
 }
 
 fn main() {
-    let raw_intcode: Vec<i32> = parse_memory_from_text_file("input.txt");
-    let memory: Vec<i32> = add_ram(&raw_intcode);
+    let raw_intcode: Vec<i64> = parse_memory_from_text_file("input.txt");
+    let memory: Vec<i64> = add_ram(&raw_intcode);
 
     // println!("memory: {:?}", memory);
     //let output = "I do nothing";
@@ -81,19 +81,20 @@ fn main() {
 
 // Increase the length of the input vec by appending a vec of zeroes (? how many OR set as indices increase?)
 // TODO: Add error handling for 'Index out range, that prints the index value used"
-fn add_ram(raw_intcode: &Vec<i32>) -> Vec<i32> {
+fn add_ram(raw_intcode: &Vec<i64>) -> Vec<i64> {
     let mut memory = raw_intcode.clone();
-    let mut ram: Vec<i32> = vec![0; 1000000];
+    let count: usize = raw_intcode.iter().count();
+    let mut ram: Vec<i64> = vec![0; count * 8]; // * 8 is just what works for now
 
     memory.append(&mut ram);
 
     memory
 }
 
-fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> Vec<i32> {
+fn run_program(mut memory: Vec<i64>, input: i64, phase: i64) -> Vec<i64> {
     let mut pointer: usize = 0;
     let mut intcode: InstructionSet = Default::default();
-    let mut output: Vec<i32> = vec![];
+    let mut output: Vec<i64> = vec![];
     let mut phase_set: bool = false;
     let mut rel_base = RelativeBase {
         value: 0,
@@ -203,25 +204,25 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> Vec<i32> {
 
 // Returns either the value in 'memory' at 'pointer' index, or the value at the 'memory' index given
 // by the value in 'memory' at 'pointer' index, depending on the value of 'param_mode' (1 or 0).
-fn get_value(param_mode: &u8, pointer: &usize, rel_base: &mut RelativeBase, memory: &Vec<i32>) -> i32 {
+fn get_value(param_mode: &u8, pointer: &usize, rel_base: &mut RelativeBase, memory: &Vec<i64>) -> i64 {
     let val_or_posn = memory[*pointer];
 
     if param_mode == &0 { // Postion mode
-        return memory[val_or_posn as usize] as i32;
+        return memory[val_or_posn as usize] as i64;
     } else if param_mode == &1 { // Immediate mode
-        return val_or_posn as i32;
+        return val_or_posn as i64;
     } else { // Relative mode
-        return memory[(rel_base.value + val_or_posn) as usize] as i32;
+        return memory[(rel_base.value + val_or_posn) as usize] as i64;
     }
 }
 
-fn parse_memory_from_text_file(filename: &str) -> Vec<i32> {
+fn parse_memory_from_text_file(filename: &str) -> Vec<i64> {
     let memory_string: String = fs::read_to_string(filename).expect("Error reading file!");
     let split_input: Vec<&str> = memory_string.split(',').collect();
-    let memory: Vec<i32> = split_input
+    let memory: Vec<i64> = split_input
         .iter()
-        .map(|s| s.parse::<i32>().unwrap())
-        .collect::<Vec<i32>>();
+        .map(|s| s.parse::<i64>().unwrap())
+        .collect::<Vec<i64>>();
 
     memory
 }
@@ -286,11 +287,11 @@ mod tests {
     #[test]
     fn run_program_test() {
         // Example 1: Outputs a copy of itself.
-        let raw_intcode: Vec<i32> = vec![
+        let raw_intcode: Vec<i64> = vec![
             109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99,
         ];
         let intcode_copy = raw_intcode.clone();
-        let memory: Vec<i32> = add_ram(&raw_intcode);
+        let memory: Vec<i64> = add_ram(&raw_intcode);
         let output = run_program(memory, 0, 1);
         assert_eq!(output, intcode_copy);
     }
