@@ -102,9 +102,8 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> Vec<i32> {
     loop {
         intcode.new_raw_code(memory[pointer]);
 
-        println!("loop start:");
-        println!("{} {} ", "opcode: ".cyan(), intcode.opcode);
-
+        println!("{} ", "loop start:".cyan());
+        println!("{} {} ", "  opcode:".cyan(), intcode.opcode);
 
         if intcode.opcode == 1 { // Add p1 & p2, and write to p3
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
@@ -113,14 +112,14 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> Vec<i32> {
 
             memory[address] = param_1 + param_2;
             pointer += 4;
-        } else if intcode.opcode == 2 {
+        } else if intcode.opcode == 2 { // Mulitply p1 & p2, and write to p3
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
             let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &mut rel_base, &memory);
             let address = memory[pointer + 3] as usize;
 
             memory[address] = param_1 * param_2;
             pointer += 4;
-        } else if intcode.opcode == 3 {
+        } else if intcode.opcode == 3 { // Input
             let address = memory[pointer + 1] as usize;
 
             if phase_set == false {
@@ -131,7 +130,7 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> Vec<i32> {
             }
 
             pointer += 2;
-        } else if intcode.opcode == 4 { // output (write to output vec)
+        } else if intcode.opcode == 4 { // Output (write to output vec)
             println!("opcode 4 (output):");
 
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
@@ -140,7 +139,7 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> Vec<i32> {
 
             output.push(param_1);
             pointer += 2;
-        } else if intcode.opcode == 5 {
+        } else if intcode.opcode == 5 { // If p1 != 0 ? set pointer to p2
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
 
             if param_1 != 0 {
@@ -149,7 +148,7 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> Vec<i32> {
             } else {
                 pointer += 3
             }
-        } else if intcode.opcode == 6 {
+        } else if intcode.opcode == 6 { // If p1 == 0 ? set pointer to p2 
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
 
             if param_1 == 0 {
@@ -158,7 +157,7 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> Vec<i32> {
             } else {
                 pointer += 3
             }
-        } else if intcode.opcode == 7 {
+        } else if intcode.opcode == 7 { // If p1 < p2 ? write 1 : write 0
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
             let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &mut rel_base, &memory);
             let address = memory[pointer + 3] as usize;
@@ -170,7 +169,7 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> Vec<i32> {
             }
 
             pointer += 4;
-        } else if intcode.opcode == 8 {
+        } else if intcode.opcode == 8 { // If p1 == p2 ? write 1 : write 0
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
             let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &mut rel_base, &memory);
             let address = memory[pointer + 3] as usize;
@@ -182,7 +181,7 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> Vec<i32> {
             }
 
             pointer += 4;
-        } else if intcode.opcode == 9 {
+        } else if intcode.opcode == 9 { // Add to relative base
             println!("opcode 9 (add to rel_base):");
 
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
@@ -191,12 +190,12 @@ fn run_program(mut memory: Vec<i32>, input: i32, phase: i32) -> Vec<i32> {
 
             rel_base.value = rel_base.value + param_1;
             pointer += 2;
-        }else if intcode.opcode == 99 {
+        }else if intcode.opcode == 99 { // Exit
             break;
         }
 
-        println!("loop end:");
-        println!("  value: {}", rel_base.value);
+        println!("{} ", "loop end:".blue());
+        println!("{} {} ", "  rel_base:".blue(), rel_base.value);
     }
 
     output
