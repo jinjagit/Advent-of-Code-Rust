@@ -1,5 +1,4 @@
 use std::fs;
-use colored::*;
 
 pub struct RelativeBase {
     value: i64,
@@ -77,11 +76,7 @@ fn main() {
     let raw_intcode: Vec<i64> = parse_memory_from_text_file("input.txt");
     let memory: Vec<i64> = add_ram(&raw_intcode);
 
-    // println!("memory: {:?}", memory);
-    //let output = "I do nothing";
-
-    // TODO: Run program with phase = 1, input = 0, for exercise, as phase is really the 1st input.
-
+    // Run program with phase = 1, input = 0, for exercise, as phase is really the 1st input.
     let output = run_program(memory, 0, 1);
 
     println!("output: {:?}", output);
@@ -111,24 +106,21 @@ fn run_program(mut memory: Vec<i64>, input: i64, phase: i64) -> Vec<i64> {
     loop {
         intcode.new_raw_code(memory[pointer]);
 
-        println!("{} ", "loop start:".cyan());
-        println!("{} {} ", "  opcode:".cyan(), intcode.opcode);
-
-        if intcode.opcode == 1 { // Add p1 & p2, and write to address indicated by p3 (depending on mode)
+        if intcode.opcode == 1 { // Add p1 + p2, and write to address indicated by p3 (depending on mode)
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
             let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &mut rel_base, &memory);
             let address = get_address(&intcode.param3_mode, &(pointer + 3), &mut rel_base, &memory);
 
             memory[address] = param_1 + param_2;
             pointer += 4;
-        } else if intcode.opcode == 2 { // Mulitply p1 & p2, and write to address indicated by p3 (depending on mode)
+        } else if intcode.opcode == 2 { // Mulitply p1 * p2, and write to address indicated by p3 (depending on mode)
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
             let param_2 = get_value(&intcode.param2_mode, &(pointer + 2), &mut rel_base, &memory);
             let address = get_address(&intcode.param3_mode, &(pointer + 3), &mut rel_base, &memory);
 
             memory[address] = param_1 * param_2;
             pointer += 4;
-        } else if intcode.opcode == 3 { // Input at address indicated by p1 (depending on mode) - NO rel_base mode, as yet!
+        } else if intcode.opcode == 3 { // Input at address indicated by p1 (depending on mode)
             let address = get_address(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
 
             if phase_set == false {
@@ -140,15 +132,11 @@ fn run_program(mut memory: Vec<i64>, input: i64, phase: i64) -> Vec<i64> {
 
             pointer += 2;
         } else if intcode.opcode == 4 { // Output (write to output vec)
-            println!("opcode 4 (output):");
-
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
-
-            println!("  param_1: {}", param_1);
 
             output.push(param_1);
             pointer += 2;
-        } else if intcode.opcode == 5 { // If p1 != 0 ? set pointer to p2 (or change rel. base? if mode == 2)
+        } else if intcode.opcode == 5 { // If p1 != 0 ? set pointer to p2 value
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
 
             if param_1 != 0 {
@@ -157,7 +145,7 @@ fn run_program(mut memory: Vec<i64>, input: i64, phase: i64) -> Vec<i64> {
             } else {
                 pointer += 3
             }
-        } else if intcode.opcode == 6 { // If p1 == 0 ? set pointer to p2 (or change rel. base? if mode == 2)
+        } else if intcode.opcode == 6 { // If p1 == 0 ? set pointer to p2 value
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
 
             if param_1 == 0 {
@@ -191,25 +179,19 @@ fn run_program(mut memory: Vec<i64>, input: i64, phase: i64) -> Vec<i64> {
 
             pointer += 4;
         } else if intcode.opcode == 9 { // Add to relative base
-            println!("opcode 9 (add to rel_base):");
-
             let param_1 = get_value(&intcode.param1_mode, &(pointer + 1), &mut rel_base, &memory);
-
-            println!("  param_1: {}", param_1);
 
             rel_base.value = rel_base.value + param_1;
             pointer += 2;
         }else if intcode.opcode == 99 { // Exit
             break;
         }
-
-        println!("{} ", "loop end:".blue());
-        println!("{} {} ", "  rel_base:".blue(), rel_base.value);
     }
 
     output
 }
 
+// 'Memory' address used when writin result of opcode 1, 2, 3, 7, or 8.
 fn get_address(param_mode: &u8, pointer: &usize, rel_base: &mut RelativeBase, memory: &Vec<i64>) -> usize {
     if param_mode == &2 {
         return (rel_base.value + memory[*pointer]) as usize;
@@ -218,16 +200,17 @@ fn get_address(param_mode: &u8, pointer: &usize, rel_base: &mut RelativeBase, me
     }
 }
 
-// Returns either the value in 'memory' at 'pointer' index, or the value at the 'memory' index given
-// by the value in 'memory' at 'pointer' index, depending on the value of 'param_mode' (1 or 0).
+// Returns the value at the 'memory' index given by the value in 'memory' at 'pointer' index,
+// the value in 'memory' at 'pointer' index, or the value of the 'rel_base',
+// depending on the value of 'param_mode' (0, 1, or 2).
 fn get_value(param_mode: &u8, pointer: &usize, rel_base: &mut RelativeBase, memory: &Vec<i64>) -> i64 {
     let val_or_posn = memory[*pointer];
 
-    if param_mode == &0 { // Postion mode
+    if param_mode == &0 {         // Postion mode
         return memory[val_or_posn as usize] as i64;
-    } else if param_mode == &1 { // Immediate mode
+    } else if param_mode == &1 {  // Immediate mode
         return val_or_posn as i64;
-    } else { // Relative mode
+    } else {                      // Relative mode
         return memory[(rel_base.value + val_or_posn) as usize] as i64;
     }
 }
