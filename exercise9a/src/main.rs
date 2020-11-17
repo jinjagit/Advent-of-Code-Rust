@@ -211,9 +211,7 @@ fn get_value(param_mode: &u8, pointer: &usize, rel_base: &mut RelativeBase, memo
     } else if param_mode == &1 { // Immediate mode
         return val_or_posn as i32;
     } else { // Relative mode
-        //let param = memory[val_or_posn as usize] as i32;
-        rel_base.value = rel_base.value + val_or_posn;
-        return memory[rel_base.value as usize] as i32;
+        return memory[(rel_base.value + val_or_posn) as usize] as i32;
     }
 }
 
@@ -286,28 +284,14 @@ mod tests {
     }
 
     #[test]
-    fn run_amplifiers_test() {
-        // let memory: Vec<i32> = vec![
-        //     3, 15, 3, 16, 1002, 16, 10, 16, 1, 16, 15, 15, 4, 15, 99, 0, 0,
-        // ];
-        // let phases: Vec<i32> = vec![4, 3, 2, 1, 0];
-        // let output: i32 = run_amplifiers(memory, phases);
-        // assert_eq!(output, 43210);
-
-        // let memory: Vec<i32> = vec![
-        //     3, 23, 3, 24, 1002, 24, 10, 24, 1002, 23, -1, 23, 101, 5, 23, 23, 1, 24, 23, 23, 4, 23,
-        //     99, 0, 0,
-        // ];
-        // let phases: Vec<i32> = vec![0, 1, 2, 3, 4];
-        // let output: i32 = run_amplifiers(memory, phases);
-        // assert_eq!(output, 54321);
-
-        // let memory: Vec<i32> = vec![
-        //     3, 31, 3, 32, 1002, 32, 10, 32, 1001, 31, -2, 31, 1007, 31, 0, 33, 1002, 33, 7, 33, 1,
-        //     33, 31, 31, 1, 32, 31, 31, 4, 31, 99, 0, 0, 0,
-        // ];
-        // let phases: Vec<i32> = vec![1, 0, 4, 3, 2];
-        // let output: i32 = run_amplifiers(memory, phases);
-        // assert_eq!(output, 65210);
+    fn run_program_test() {
+        // Example 1: Outputs a copy of itself.
+        let raw_intcode: Vec<i32> = vec![
+            109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99,
+        ];
+        let intcode_copy = raw_intcode.clone();
+        let memory: Vec<i32> = add_ram(&raw_intcode);
+        let output = run_program(memory, 0, 1);
+        assert_eq!(output, intcode_copy);
     }
 }
