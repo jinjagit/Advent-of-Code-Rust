@@ -47,7 +47,7 @@ impl InstructionSet {
 
         // Parse paramater modes, if specified in raw instruction-set code integer.
         let check_param_mode = |n: u8| {
-            if n > 2 { // Parameter mode can be 0, 1 or 2.
+            if n > 2 { // Parameter mode can be 0, 1, or 2.
                 panic!("Error! Unable to parse valid parameter mode from {}", raw);
             }
         };
@@ -185,7 +185,7 @@ fn run_program(mut memory: Vec<i64>, input: i64, phase: i64) -> Vec<i64> {
     output
 }
 
-// 'Memory' address used when writin result of opcode 1, 2, 3, 7, or 8.
+// 'Memory' address used when writing result of opcode 1, 2, 3, 7, or 8.
 fn get_address(param_mode: &u8, pointer: &usize, rel_base: &i64, memory: &Vec<i64>) -> usize {
     if param_mode == &2 {
         return (rel_base + memory[*pointer]) as usize;
