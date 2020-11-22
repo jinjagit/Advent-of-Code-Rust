@@ -74,7 +74,7 @@ fn main() {
     let memory: Vec<i64> = add_ram(&raw_intcode);
 
     // Run program with phase = 1, input = 0, for exercise, as phase is really the 1st input.
-    let output = run_program(memory, 0, 1);
+    let output = run_program(memory, 0, 2);
 
     println!("output: {:?}", output);
 }
