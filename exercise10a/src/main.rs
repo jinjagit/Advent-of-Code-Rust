@@ -1,6 +1,30 @@
+use std::fs;
+
 fn main() {
-    let dir: (i32, i32) = direction((-64, 4));
-    println!("dir: {:?}", dir);
+    let input: String = fs::read_to_string("input.txt").expect("Error reading file!");
+    let coords: Vec<(i32, i32)> = parse_coordinates(input);
+
+    println!("{:?}", coords);
+
+    // let dir: (i32, i32) = direction((-64, 4));
+    // println!("dir: {:?}", dir);
+}
+
+fn parse_coordinates(input: String) -> Vec<(i32, i32)> {
+    let lines: Vec<&str> = input.split('\n').collect();
+    let mut coords: Vec<(i32, i32)> = vec![];
+
+    for j in 0..lines.iter().count() {
+        let chars: Vec<char> = lines[j].to_string().chars().collect::<Vec<_>>();
+
+        for i in 0..chars.iter().count() {
+            if chars[i] == '#' {
+                coords.push((i as i32, j as i32));
+            }
+        }
+    }
+    
+    coords
 }
 
 // Reduce a two-value coordinate vector (dx, dy) to the smallest possible integer vector representing the same direction.
