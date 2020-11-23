@@ -14,25 +14,8 @@ fn find_best_location(coords: Vec<(i32, i32)>) -> ((i32, i32), usize) {
     let mut visible: usize = 0;
 
     for &loc in &coords {
-        let directions = list_directions(&coords, &loc);
-
-        // build a list of groups (lists) of identical directions
-        let mut dir_groups: Vec<Vec<(i32, i32)>> = vec![];
-
-        for dir in directions {
-            let mut group_exists: bool = false;
-
-            for i in 0..dir_groups.iter().count() {
-                if dir_groups[i][0] == dir {
-                    group_exists = true;
-                    dir_groups[i].push(dir);
-                }
-            }
-
-            if group_exists == false {
-                dir_groups.push(vec![dir]);
-            }
-        }
+        let directions: Vec<(i32, i32)> = list_directions(&coords, &loc);
+        let dir_groups: Vec<Vec<(i32, i32)>> = group_directions(directions);
 
         // Calculate n of visible asteroids
         let mut n: usize = count;
@@ -91,6 +74,28 @@ fn list_directions(coords: &Vec<(i32, i32)>, loc: &(i32, i32)) -> Vec<(i32, i32)
         }
 
         directions
+}
+
+// Build a list of groups (lists) of identical directions
+fn group_directions(directions: Vec<(i32, i32)>) -> Vec<Vec<(i32, i32)>> {
+    let mut dir_groups: Vec<Vec<(i32, i32)>> = vec![];
+
+        for dir in directions {
+            let mut group_exists: bool = false;
+
+            for i in 0..dir_groups.iter().count() {
+                if dir_groups[i][0] == dir {
+                    group_exists = true;
+                    dir_groups[i].push(dir);
+                }
+            }
+
+            if group_exists == false {
+                dir_groups.push(vec![dir]);
+            }
+        }
+
+        dir_groups
 }
 
 fn parse_coordinates(input: String) -> Vec<(i32, i32)> {
