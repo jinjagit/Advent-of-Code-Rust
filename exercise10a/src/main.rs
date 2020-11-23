@@ -11,7 +11,7 @@ fn main() {
 // Find asteroid location where most other asteroids are visible: return location & n of visible asteroids.
 fn find_best_location(coords: Vec<(u32, u32)>) -> ((u32, u32), usize) {
     let count = coords.iter().count();
-    let mut best_loc: (u32, u32) = (99, 99);
+    let mut best_loc: (u32, u32) = (0, 0);
     let mut visible: usize = 0;
 
     for &loc in &coords {
