@@ -8,7 +8,7 @@ fn main() {
     println!("best: {:?}, n: {}", best_location, n_of_visible);
 }
 
-// Returns asteroid location where most other ateroids are visible & n of visible asteroids
+// Returns asteroid location where most other asteroids are visible, & n of visible asteroids.
 fn find_best_location(coords: Vec<(i32, i32)>) -> ((i32, i32), usize) {
     let count = coords.iter().count();
     let mut best_loc: (i32, i32) = (-1, -1);
@@ -35,71 +35,77 @@ fn direction((a, b): (i32, i32)) -> (i32, i32) {
     return (a / gcd, b / gcd);
 }
 
-// Find greatest common denominator of 2 integers
+// Find greatest common denominator of any 2 integers (+'ve or -'ve, including zero).
 fn find_gcd(a: i32, b: i32) -> i32 {
     let mut a = a.abs();
     let mut b = b.abs();
 
-    if a == 0 { return b; }
-    if b == 0 { return a; }
+    if a == 0 {
+        return b;
+    }
+    if b == 0 {
+        return a;
+    }
 
     while a != b {
-        if a > b { a -= b; }
-        else { b -= a; }
+        if a > b {
+            a -= b;
+        } else {
+            b -= a;
+        }
     }
-    
+
     a
 }
 
-// Build list of directions of all asteroids relative to asteroid @ 'loc'
+// Build list of directions of all asteroids relative to asteroid @ 'loc'.
 fn list_directions(coords: &Vec<(i32, i32)>, loc: &(i32, i32)) -> Vec<(i32, i32)> {
     let mut directions: Vec<(i32, i32)> = vec![];
 
-        // build list of directions of all asteroids relative to asteroid @ 'loc'
-        for &loc_a in coords {
-            if &loc_a != loc {
-                let (x, y) = &loc;
-                let (a, b) = &loc_a;
-                let dir = direction((x - a, y - b));
-                directions.push(dir);
-            }
+    for &loc_a in coords {
+        if &loc_a != loc {
+            let (x, y) = &loc;
+            let (a, b) = &loc_a;
+            let dir = direction((x - a, y - b));
+            directions.push(dir);
         }
+    }
 
-        directions
+    directions
 }
 
-// Build a list of groups (lists) of identical directions
+// Build a list of groups (lists) of identical directions.
 fn group_directions(directions: Vec<(i32, i32)>) -> Vec<Vec<(i32, i32)>> {
     let mut dir_groups: Vec<Vec<(i32, i32)>> = vec![];
 
-        for dir in directions {
-            let mut group_exists: bool = false;
+    for dir in directions {
+        let mut group_exists: bool = false;
 
-            for i in 0..dir_groups.iter().count() {
-                if dir_groups[i][0] == dir {
-                    group_exists = true;
-                    dir_groups[i].push(dir);
-                }
-            }
-
-            if group_exists == false {
-                dir_groups.push(vec![dir]);
+        for i in 0..dir_groups.iter().count() {
+            if dir_groups[i][0] == dir {
+                group_exists = true;
+                dir_groups[i].push(dir);
             }
         }
 
-        dir_groups
+        if group_exists == false {
+            dir_groups.push(vec![dir]);
+        }
+    }
+
+    dir_groups
 }
 
-// Calculate n of visible asteroids
+// Calculate n of visible asteroids.
 fn count_visible(count: usize, dir_groups: Vec<Vec<(i32, i32)>>) -> usize {
     let mut n: usize = count - 1;
-        for group in dir_groups {
-            let elem_count: usize = group.iter().count() - 1;
+    for group in dir_groups {
+        let elem_count: usize = group.iter().count() - 1;
 
-            n -= elem_count;
-        }
+        n -= elem_count;
+    }
 
-        n
+    n
 }
 
 fn parse_coordinates(input: String) -> Vec<(i32, i32)> {
