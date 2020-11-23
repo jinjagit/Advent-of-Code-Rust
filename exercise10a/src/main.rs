@@ -2,16 +2,16 @@ use std::fs;
 
 fn main() {
     let input: String = fs::read_to_string("input.txt").expect("Error reading file!");
-    let coords: Vec<(i32, i32)> = parse_coordinates(input);
-    let (best_location, n_of_visible): ((i32, i32), usize) = find_best_location(coords);
+    let coords: Vec<(u32, u32)> = parse_coordinates(input);
+    let (best_location, n_of_visible): ((u32, u32), usize) = find_best_location(coords);
 
     println!("best: {:?}, n: {}", best_location, n_of_visible);
 }
 
 // Find asteroid location where most other asteroids are visible: return location & n of visible asteroids.
-fn find_best_location(coords: Vec<(i32, i32)>) -> ((i32, i32), usize) {
+fn find_best_location(coords: Vec<(u32, u32)>) -> ((u32, u32), usize) {
     let count = coords.iter().count();
-    let mut best_loc: (i32, i32) = (-1, -1);
+    let mut best_loc: (u32, u32) = (99, 99);
     let mut visible: usize = 0;
 
     for &loc in &coords {
@@ -58,14 +58,14 @@ fn find_gcd(a: i32, b: i32) -> i32 {
 }
 
 // Build list of directions of all asteroids relative to asteroid @ 'loc'.
-fn list_directions(coords: &Vec<(i32, i32)>, loc: &(i32, i32)) -> Vec<(i32, i32)> {
+fn list_directions(coords: &Vec<(u32, u32)>, loc: &(u32, u32)) -> Vec<(i32, i32)> {
     let mut directions: Vec<(i32, i32)> = vec![];
 
     for &loc_a in coords {
         if &loc_a != loc {
             let (x, y) = &loc;
             let (a, b) = &loc_a;
-            let dir = direction((x - a, y - b));
+            let dir = direction((*x as i32 - *a as i32, *y as i32 - *b as i32));
 
             directions.push(dir);
         }
@@ -108,16 +108,16 @@ fn count_visible(count: usize, dir_groups: Vec<Vec<(i32, i32)>>) -> usize {
     n
 }
 
-fn parse_coordinates(input: String) -> Vec<(i32, i32)> {
+fn parse_coordinates(input: String) -> Vec<(u32, u32)> {
     let lines: Vec<&str> = input.split('\n').collect();
-    let mut coords: Vec<(i32, i32)> = vec![];
+    let mut coords: Vec<(u32, u32)> = vec![];
 
     for j in 0..lines.iter().count() {
         let chars: Vec<char> = lines[j].to_string().chars().collect::<Vec<_>>();
 
         for i in 0..chars.iter().count() {
             if chars[i] == '#' {
-                coords.push((i as i32, j as i32));
+                coords.push((i as u32, j as u32));
             }
         }
     }
