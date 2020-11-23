@@ -8,7 +8,7 @@ fn main() {
     println!("best: {:?}, n: {}", best_location, n_of_visible);
 }
 
-// Returns asteroid location where most other asteroids are visible, & n of visible asteroids.
+// Find asteroid location where most other asteroids are visible: return location & n of visible asteroids.
 fn find_best_location(coords: Vec<(i32, i32)>) -> ((i32, i32), usize) {
     let count = coords.iter().count();
     let mut best_loc: (i32, i32) = (-1, -1);
