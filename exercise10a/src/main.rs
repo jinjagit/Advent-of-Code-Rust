@@ -8,6 +8,7 @@ fn main() {
     println!("best: {:?}, n: {}", best_location, n_of_visible);
 }
 
+// Returns asteroid location where most other ateroids are visible & n of visible asteroids
 fn find_best_location(coords: Vec<(i32, i32)>) -> ((i32, i32), usize) {
     let count = coords.iter().count();
     let mut best_loc: (i32, i32) = (-1, -1);
@@ -16,16 +17,7 @@ fn find_best_location(coords: Vec<(i32, i32)>) -> ((i32, i32), usize) {
     for &loc in &coords {
         let directions: Vec<(i32, i32)> = list_directions(&coords, &loc);
         let dir_groups: Vec<Vec<(i32, i32)>> = group_directions(directions);
-
-        // Calculate n of visible asteroids
-        let mut n: usize = count;
-        for group in dir_groups {
-            let elem_count: usize = group.iter().count() - 1;
-
-            n -= elem_count;
-        }
-
-        n -= 1;
+        let n: usize = count_visible(count, dir_groups);
 
         if n > visible {
             visible = n;
@@ -96,6 +88,18 @@ fn group_directions(directions: Vec<(i32, i32)>) -> Vec<Vec<(i32, i32)>> {
         }
 
         dir_groups
+}
+
+// Calculate n of visible asteroids
+fn count_visible(count: usize, dir_groups: Vec<Vec<(i32, i32)>>) -> usize {
+    let mut n: usize = count - 1;
+        for group in dir_groups {
+            let elem_count: usize = group.iter().count() - 1;
+
+            n -= elem_count;
+        }
+
+        n
 }
 
 fn parse_coordinates(input: String) -> Vec<(i32, i32)> {
