@@ -31,7 +31,7 @@ fn find_best_location(coords: Vec<(i32, i32)>) -> ((i32, i32), usize) {
 // Reduce a two-value coordinate vector (dx, dy) to the smallest possible integer vector representing the same direction.
 // Example: direction((9, -3)) => (3, -1)
 fn direction((a, b): (i32, i32)) -> (i32, i32) {
-    let gcd = find_gcd(a, b);
+    let gcd: i32 = find_gcd(a, b);
     return (a / gcd, b / gcd);
 }
 
