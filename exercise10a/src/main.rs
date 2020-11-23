@@ -14,17 +14,7 @@ fn find_best_location(coords: Vec<(i32, i32)>) -> ((i32, i32), usize) {
     let mut visible: usize = 0;
 
     for &loc in &coords {
-        let mut directions: Vec<(i32, i32)> = vec![];
-
-        // build list of directions of all asteroids relative to asteroid @ 'loc'
-        for &loc_a in &coords {
-            if &loc_a != &loc {
-                let (x, y) = &loc;
-                let (a, b) = &loc_a;
-                let dir = direction((x - a, y - b));
-                directions.push(dir);
-            }
-        }
+        let directions = list_directions(&coords, &loc);
 
         // build a list of groups (lists) of identical directions
         let mut dir_groups: Vec<Vec<(i32, i32)>> = vec![];
@@ -84,6 +74,23 @@ fn find_gcd(a: i32, b: i32) -> i32 {
     }
     
     a
+}
+
+// Build list of directions of all asteroids relative to asteroid @ 'loc'
+fn list_directions(coords: &Vec<(i32, i32)>, loc: &(i32, i32)) -> Vec<(i32, i32)> {
+    let mut directions: Vec<(i32, i32)> = vec![];
+
+        // build list of directions of all asteroids relative to asteroid @ 'loc'
+        for &loc_a in coords {
+            if &loc_a != loc {
+                let (x, y) = &loc;
+                let (a, b) = &loc_a;
+                let dir = direction((x - a, y - b));
+                directions.push(dir);
+            }
+        }
+
+        directions
 }
 
 fn parse_coordinates(input: String) -> Vec<(i32, i32)> {
