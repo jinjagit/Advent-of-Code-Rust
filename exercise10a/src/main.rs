@@ -42,8 +42,7 @@ fn find_gcd(a: i32, b: i32) -> i32 {
 
     if a == 0 {
         return b;
-    }
-    if b == 0 {
+    } else if b == 0 {
         return a;
     }
 
@@ -67,6 +66,7 @@ fn list_directions(coords: &Vec<(i32, i32)>, loc: &(i32, i32)) -> Vec<(i32, i32)
             let (x, y) = &loc;
             let (a, b) = &loc_a;
             let dir = direction((x - a, y - b));
+
             directions.push(dir);
         }
     }
