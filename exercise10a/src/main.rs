@@ -4,13 +4,8 @@ fn main() {
     let input: String = fs::read_to_string("input.txt").expect("Error reading file!");
     let coords: Vec<(i32, i32)> = parse_coordinates(input);
     let (best_location, n_of_visible): ((i32, i32), usize) = find_best_location(coords);
-    
+
     println!("best: {:?}, n: {}", best_location, n_of_visible);
-
-    // println!("{:?}", coords);
-
-    // let dir: (i32, i32) = direction((-64, 4));
-    // println!("dir: {:?}", dir);
 }
 
 fn find_best_location(coords: Vec<(i32, i32)>) -> ((i32, i32), usize) {
@@ -44,15 +39,17 @@ fn find_best_location(coords: Vec<(i32, i32)>) -> ((i32, i32), usize) {
                 }
             }
 
-            if group_exists == false { dir_groups.push(vec![dir]); }
+            if group_exists == false {
+                dir_groups.push(vec![dir]);
+            }
         }
 
         // Calculate n of visible asteroids
         let mut n: usize = count;
         for group in dir_groups {
-            let elem_count: usize = group.iter().count();
+            let elem_count: usize = group.iter().count() - 1;
 
-            if elem_count > 1 { n = n - (elem_count - 1); }
+            n -= elem_count;
         }
 
         n -= 1;
@@ -61,17 +58,13 @@ fn find_best_location(coords: Vec<(i32, i32)>) -> ((i32, i32), usize) {
             visible = n;
             best_loc = loc;
         }
-
-        // DEBUG: location x & y are inverted by this point!!!
-        println!("{:?}", &loc);
-        // println!("{:?}", dir_groups);
     }
 
     ((best_loc), visible)
 }
 
 // Reduce a two-value coordinate vector (dx, dy) to the smallest possible integer vector representing the same direction.
-// Example: direction((9, -3)) => (3, -1) 
+// Example: direction((9, -3)) => (3, -1)
 fn direction((a, b): (i32, i32)) -> (i32, i32) {
     let gcd = find_gcd(a, b);
     return (a / gcd, b / gcd);
@@ -79,36 +72,18 @@ fn direction((a, b): (i32, i32)) -> (i32, i32) {
 
 // Find greatest common denominator of 2 integers
 fn find_gcd(a: i32, b: i32) -> i32 {
-    let mut a = a.abs() as f32;
-    let mut b = b.abs() as f32;
-    let gcd: i32;
+    let mut a = a.abs();
+    let mut b = b.abs();
 
-    if b > a {
-        let temp = a;
-        a = b;
-        b = temp;
+    if a == 0 { return b; }
+    if b == 0 { return a; }
+
+    while a != b {
+        if a > b { a -= b; }
+        else { b -= a; }
     }
-
-    loop {
-        if a == 0.0 {
-            gcd = b as i32;
-            break;
-        } else if b == 0.0 {
-            gcd = a as i32;
-            break;
-        }
-
-        let temp = a;
-        let ratio = a / b;
-        if ratio.floor() != ratio {
-            b = temp - (b * ratio.floor());
-            a = ratio.floor() - b;
-        } else {
-            a = 0.0;
-        }
-    }
-
-    gcd
+    
+    a
 }
 
 fn parse_coordinates(input: String) -> Vec<(i32, i32)> {
@@ -124,7 +99,7 @@ fn parse_coordinates(input: String) -> Vec<(i32, i32)> {
             }
         }
     }
-    
+
     coords
 }
 
@@ -153,6 +128,9 @@ mod tests {
 
         let gcd = find_gcd(19, 0);
         assert_eq!(gcd, 19);
+
+        let gcd = find_gcd(-9, -6);
+        assert_eq!(gcd, 3);
     }
 
     #[test]
@@ -165,5 +143,42 @@ mod tests {
 
         let dir = direction((-48, -3));
         assert_eq!(dir, (-16, -1));
+
+        let dir = direction((-9, -6));
+        assert_eq!(dir, (-3, -2));
+    }
+
+    // .#..#    (1, 0), (4, 0),
+    // .....
+    // #####    (0, 2), (1, 2), (2, 2), (3, 2), (4, 2),
+    // ....#    (4, 3),
+    // ...##    (3, 4), (4, 4)
+    #[test]
+    fn parse_coordinates_test() {
+        let input = String::from(".#..#\n.....\n#####\n....#\n...##");
+        let coords = parse_coordinates(input);
+        assert_eq!(
+            coords,
+            vec![
+                (1, 0),
+                (4, 0),
+                (0, 2),
+                (1, 2),
+                (2, 2),
+                (3, 2),
+                (4, 2),
+                (4, 3),
+                (3, 4),
+                (4, 4)
+            ]
+        );
+    }
+
+    #[test]
+    fn find_best_location_test() {
+        let input = String::from(".#..#\n.....\n#####\n....#\n...##");
+        let coords = parse_coordinates(input);
+        let result = find_best_location(coords);
+        assert_eq!(result, ((3, 4), 8));
     }
 }
