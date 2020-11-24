@@ -103,7 +103,7 @@ Here are some larger examples:
 
 # My notes:
 
-This seems very similar to how I worked out which pieces were pinned in my chess app.  
+This seems very similar to how I worked out which pieces are pinned in my chess app.  
   
 Basic method is probably:  
 
