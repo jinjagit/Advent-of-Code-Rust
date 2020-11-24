@@ -111,19 +111,17 @@ Get count of all asteroids. 'Visible' asteroids from an asteroid = count - obscu
 ```
 Loop through each asteroid, considering each one as a potential 'base' site
   For each asteroid (that is not the one being consider as the base), calculate vector (as (dx, dy)) from the considered 'base'.  
-  Reduce each vector to minimum sized integer pair possible (using lcd) = direction. Store each direction vector with respective asteroid coordinates (structs).  
-  Then loop through a list of all structs created:  
+  Reduce each vector to minimum sized integer pair possible (using gcd) = direction. Store each direction vector with respective asteroid coordinates (structs).  
+  Then loop through a list of all directions created:  
     Move 1st to (initially empty) 'same_vector_list' + any others with same vector.  
-      If 'same_vector_list' count == 1, then do nothing (except ensure this struct is dumped)  
-      If 'same_vector_list' count > 1, then add count - 1 to 'obscured_count'  
-  End loop when original list of all structs is empty. 
-  Store n of visible asteroids for the considered 'base' site in a list  
-End loop when all asteroids considered as potential 'base' site  
-Find asteroid with highest n of visible asteroids in resultant list  
+      If 'same_direction_list' count == 1, then do nothing    
+      If 'same_direction_list' count > 1, then add count - 1 to 'obscured_count'   
+  End loop   
+  Store n of visible asteroids, and coords of asteroid considerd for 'base', if better than 'best' so far    
+End loop    
+Return asteroid coords with highest n of visible asteroids 
 ```
 The above should work, but is not optimized. Possible optimizations include:    
   Storing relations between asteroids, since this data could be re-used to discover 'obscured' asteroids when considering a different asteroid 'base'.  
   All asteroids on neighboring rows or columns will be visible.  
-Whilst these optimizations would reduce time taken (and ops) to find 'best' asteroid, I am not sure it would make a significant enough difference to justify the increased complexity (could be wrong).  
-
-N.B. Calculating coordintes and vectors requires involving the dimensions of the map in the calculation. This could also be used in stucturing the lists/arrays/vectors (though this may not prove to be that useful, and is somewhat arbitrary - perhaps clearer to a reader of the code, however).    
+Whilst these optimizations would reduce time taken (and ops) to find 'best' asteroid, I am not sure it would make a significant enough difference to justify the increased complexity (could be wrong).      
