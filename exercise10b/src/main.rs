@@ -3,18 +3,29 @@ use std::fs;
 fn main() {
     let input: String = fs::read_to_string("input.txt").expect("Error reading file!");
     let coords: Vec<(u32, u32)> = parse_coordinates(input);
-    let (best_location, n_of_visible): ((u32, u32), usize) = find_best_location(coords);
+    let (best_location, n_of_visible): ((u32, u32), usize) = find_best_location(&coords);
 
     println!("best: {:?}, n: {}", best_location, n_of_visible);
+
+    // Now get a new list of dir_groups, relative to best_location
+    // TODO: Move this to a separate function: calulate_nth_lasered(dir_groups, n)
+
+    let directions: Vec<((u32, u32), (i32, i32))> = list_directions(&coords, &best_location);
+    let dir_groups: Vec<Vec<((u32, u32), (i32, i32))>> = group_directions(directions);
+
+    for group in dir_groups {
+        println!("{:?}", group);
+        println!("");
+    }
 }
 
 // Find asteroid location where most other asteroids are visible: return 'best' location & n of visible asteroids.
-fn find_best_location(coords: Vec<(u32, u32)>) -> ((u32, u32), usize) {
+fn find_best_location(coords: &Vec<(u32, u32)>) -> ((u32, u32), usize) {
     let count = coords.iter().count();
     let mut best_loc: (u32, u32) = (0, 0);
     let mut visible: usize = 0;
 
-    for &loc in &coords {
+    for &loc in coords {
         let directions: Vec<((u32, u32), (i32, i32))> = list_directions(&coords, &loc);
         let dir_groups: Vec<Vec<((u32, u32), (i32, i32))>> = group_directions(directions);
         let n: usize = count_visible(count, dir_groups);
@@ -202,7 +213,7 @@ mod tests {
     fn find_best_location_test() {
         let input = String::from(".#..#\n.....\n#####\n....#\n...##");
         let coords = parse_coordinates(input);
-        let result = find_best_location(coords);
+        let result = find_best_location(&coords);
         assert_eq!(result, ((3, 4), 8));
     }
 }
