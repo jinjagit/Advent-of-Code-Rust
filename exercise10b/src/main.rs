@@ -6,6 +6,7 @@ fn main() {
     let (best_location, n_of_visible): ((u32, u32), usize) = find_best_location(&coords);
 
     println!("best: {:?}, n: {}", best_location, n_of_visible);
+    println!("");
 
     let nth_lasered: Vec<(u32, u32)> = calculate_nth_lasered(&coords, &best_location, 99);
 }
@@ -36,18 +37,21 @@ fn order_dir_groups(
 
     for group in dir_groups {
         let ((_, _), (a, b)) = group[0];
-        if a == 0 && b == 1 {
-            // TODO: order group, by descending y values, before pushing to ordered_dir_groups
-            ordered_dir_groups.push(group);
-        } else if (a < 0 && b > 0) || (a == -1 && b == 0) || (a < 0 && b < 0) {
-            // TODO Add groups of locations that are between N & S in clockwise direction
+
+        if a == 0 && b == 1 { // Due N
+            ordered_dir_groups.push(group.into_iter().rev().collect());
+        } else if (a < 0 && b > 0) || (a == -1 && b == 0) || (a < 0 && b < 0) { // N > group < S, ordered clockwise
+            // TODO Order groups of locations that are between N & S in clockwise direction
+            //   == order in ascending values of b/a
             // TODO: order members of each group, before pushing to ordered_dir_groups
-        } else if a == 0 && b == -1 {
-            // TODO: order group, by ascending y values, before pushing to ordered_dir_groups
+            //   == if 1st quadrant, including E, then reverse
+        } else if a == 0 && b == -1 { // Due S
             ordered_dir_groups.push(group);
-        } else {
-            // TODO Add groups of locations that are between S & N in clockwise direction
+        } else { // S > group < N, ordered clockwise
+            // TODO Order groups of locations that are between S & N in clockwise direction
+            //   == order in ascending values of b/a
             // TODO: order members of each group, before pushing to ordered_dir_groups
+            //   == if 3rd quadrant, including W, then reverse
         }
     }
 
