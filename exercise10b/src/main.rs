@@ -8,21 +8,50 @@ fn main() {
     println!("best: {:?}, n: {}", best_location, n_of_visible);
 
     let nth_lasered: Vec<(u32, u32)> = calculate_nth_lasered(&coords, &best_location, 99);
-
-
 }
 
-fn calculate_nth_lasered(coords: &Vec<(u32, u32)>, base_loc: &(u32, u32), n: u32) -> Vec<(u32, u32)> {
+fn calculate_nth_lasered(
+    coords: &Vec<(u32, u32)>,
+    base_loc: &(u32, u32),
+    n: u32,
+) -> Vec<(u32, u32)> {
     let directions: Vec<((u32, u32), (i32, i32))> = list_directions(&coords, &base_loc);
     let dir_groups: Vec<Vec<((u32, u32), (i32, i32))>> = group_directions(directions);
+    let ordered_dir_groups: Vec<Vec<((u32, u32), (i32, i32))>> = order_dir_groups(dir_groups);
 
-    for group in dir_groups {
+    // DEV: printout
+    for group in ordered_dir_groups {
         println!("{:?}", group);
         println!("");
     }
 
-
+    // DEV: Default return value to prevent error.
     vec![(3, 3)]
+}
+
+fn order_dir_groups(
+    dir_groups: Vec<Vec<((u32, u32), (i32, i32))>>,
+) -> Vec<Vec<((u32, u32), (i32, i32))>> {
+    let mut ordered_dir_groups: Vec<Vec<((u32, u32), (i32, i32))>> = vec![];
+
+    for group in dir_groups {
+        let ((_, _), (a, b)) = group[0];
+        if a == 0 && b == 1 {
+            // TODO: order group, by descending y values, before pushing to ordered_dir_groups
+            ordered_dir_groups.push(group);
+        } else if (a < 0 && b > 0) || (a == -1 && b == 0) || (a < 0 && b < 0) {
+            // TODO Add groups of locations that are between N & S in clockwise direction
+            // TODO: order members of each group, before pushing to ordered_dir_groups
+        } else if a == 0 && b == -1 {
+            // TODO: order group, by ascending y values, before pushing to ordered_dir_groups
+            ordered_dir_groups.push(group);
+        } else {
+            // TODO Add groups of locations that are between S & N in clockwise direction
+            // TODO: order members of each group, before pushing to ordered_dir_groups
+        }
+    }
+
+    ordered_dir_groups
 }
 
 // Find asteroid location where most other asteroids are visible: return 'best' location & n of visible asteroids.
@@ -75,7 +104,10 @@ fn find_gcd(a: i32, b: i32) -> i32 {
 }
 
 // Build list of directions of all asteroids (in a tuple, along with the coordinates of each asteroid) relative to asteroid @ 'loc'.
-fn list_directions(coords: &Vec<(u32, u32)>, base_loc: &(u32, u32)) -> Vec<((u32, u32), (i32, i32))> {
+fn list_directions(
+    coords: &Vec<(u32, u32)>,
+    base_loc: &(u32, u32),
+) -> Vec<((u32, u32), (i32, i32))> {
     let mut directions: Vec<((u32, u32), (i32, i32))> = vec![];
 
     for &loc in coords {
@@ -92,7 +124,9 @@ fn list_directions(coords: &Vec<(u32, u32)>, base_loc: &(u32, u32)) -> Vec<((u32
 }
 
 // Build a list of groups (lists) of identical directions (in tuples, along with the coordinates of each asteroid).
-fn group_directions(directions: Vec<((u32, u32), (i32, i32))>) -> Vec<Vec<((u32, u32), (i32, i32))>> {
+fn group_directions(
+    directions: Vec<((u32, u32), (i32, i32))>,
+) -> Vec<Vec<((u32, u32), (i32, i32))>> {
     let mut dir_groups: Vec<Vec<((u32, u32), (i32, i32))>> = vec![];
 
     for elem in directions {
@@ -100,7 +134,7 @@ fn group_directions(directions: Vec<((u32, u32), (i32, i32))>) -> Vec<Vec<((u32,
         let mut group_exists: bool = false;
 
         for i in 0..dir_groups.iter().count() {
-            let (_, d) =  dir_groups[i][0];
+            let (_, d) = dir_groups[i][0];
             if d == dir {
                 group_exists = true;
                 dir_groups[i].push((loc, dir));
@@ -223,4 +257,3 @@ mod tests {
         assert_eq!(result, ((3, 4), 8));
     }
 }
-
