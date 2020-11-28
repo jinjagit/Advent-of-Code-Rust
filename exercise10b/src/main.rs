@@ -7,16 +7,22 @@ fn main() {
 
     println!("best: {:?}, n: {}", best_location, n_of_visible);
 
-    // Now get a new list of dir_groups, relative to best_location
-    // TODO: Move this to a separate function: calulate_nth_lasered(dir_groups, n)
+    let nth_lasered: Vec<(u32, u32)> = calculate_nth_lasered(&coords, &best_location, 99);
 
-    let directions: Vec<((u32, u32), (i32, i32))> = list_directions(&coords, &best_location);
+
+}
+
+fn calculate_nth_lasered(coords: &Vec<(u32, u32)>, base_loc: &(u32, u32), n: u32) -> Vec<(u32, u32)> {
+    let directions: Vec<((u32, u32), (i32, i32))> = list_directions(&coords, &base_loc);
     let dir_groups: Vec<Vec<((u32, u32), (i32, i32))>> = group_directions(directions);
 
     for group in dir_groups {
         println!("{:?}", group);
         println!("");
     }
+
+
+    vec![(3, 3)]
 }
 
 // Find asteroid location where most other asteroids are visible: return 'best' location & n of visible asteroids.
