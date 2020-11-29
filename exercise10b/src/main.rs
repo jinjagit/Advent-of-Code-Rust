@@ -59,27 +59,9 @@ fn order_dir_groups(
         }
     }
 
-    // TODO Order groups of 'right' locations that are between N & S in clockwise direction
-            //   == order in ascending values of b/a
-    let mut right_ordered: Vec<Vec<((u32, u32), (i32, i32))>> = vec![];
+    let mut right_ordered: Vec<Vec<((u32, u32), (i32, i32))>> = order_ascending_dirs(right);
 
-    loop {
-        if right.iter().count() == 0 { break; }
-
-        let mut index: usize = 0;
-        let mut lowest: f32 = 999.0;
-
-        for i in 0..right.iter().count() - 1 {
-            let ((_, _), (a, b)) = right[i][0];
-            if (b as f32 / a as f32) < lowest {
-                lowest = b as f32 / a as f32;
-                index = i;
-            }
-        }
-    
-        right_ordered.push(right.swap_remove(index));
-    }
-    
+   
 
 
     for group in right_ordered {
@@ -89,6 +71,29 @@ fn order_dir_groups(
     ordered_dir_groups.push(south);
 
     ordered_dir_groups
+}
+
+fn order_ascending_dirs(mut input: Vec<Vec<((u32, u32), (i32, i32))>>) -> Vec<Vec<((u32, u32), (i32, i32))>> {
+    let mut ordered: Vec<Vec<((u32, u32), (i32, i32))>> = vec![];
+
+    loop {
+        if input.iter().count() == 0 { break; }
+
+        let mut index: usize = 0;
+        let mut lowest: f32 = 999.0;
+
+        for i in 0..input.iter().count() - 1 {
+            let ((_, _), (a, b)) = input[i][0];
+            if (b as f32 / a as f32) < lowest {
+                lowest = b as f32 / a as f32;
+                index = i;
+            }
+        }
+    
+        ordered.push(input.swap_remove(index));
+    }
+
+    ordered
 }
 
 // Find asteroid location where most other asteroids are visible: return 'best' location & n of visible asteroids.
