@@ -52,23 +52,26 @@ fn order_dir_groups(
         } else if a == 0 && b == -1 { // Due S
             south = group;
         } else { // S > group < N, ordered clockwise
-            // TODO Order groups of locations that are between S & N in clockwise direction
-            //   == order in ascending values of b/a
-            // TODO: order members of each group, before pushing to ordered_dir_groups
-            //   == if 3rd quadrant, including W, then reverse
+            if (a > 0 && b < 0) || ( a == 1 && b == 0) {
+                left.push(group.into_iter().rev().collect());
+            } else {
+                left.push(group)
+            }
         }
     }
 
-    let mut right_ordered: Vec<Vec<((u32, u32), (i32, i32))>> = order_ascending_dirs(right);
-
-   
-
+    let right_ordered: Vec<Vec<((u32, u32), (i32, i32))>> = order_ascending_dirs(right);
+    let left_ordered: Vec<Vec<((u32, u32), (i32, i32))>> = order_ascending_dirs(left);
 
     for group in right_ordered {
         ordered_dir_groups.push(group);
     }
-   
+
     ordered_dir_groups.push(south);
+
+    for group in left_ordered {
+        ordered_dir_groups.push(group);
+    }    
 
     ordered_dir_groups
 }
@@ -82,7 +85,7 @@ fn order_ascending_dirs(mut input: Vec<Vec<((u32, u32), (i32, i32))>>) -> Vec<Ve
         let mut index: usize = 0;
         let mut lowest: f32 = 999.0;
 
-        for i in 0..input.iter().count() - 1 {
+        for i in 0..input.iter().count() {
             let ((_, _), (a, b)) = input[i][0];
             if (b as f32 / a as f32) < lowest {
                 lowest = b as f32 / a as f32;
