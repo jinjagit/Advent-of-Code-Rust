@@ -6,30 +6,54 @@ fn main() {
     let (best_location, n_of_visible): ((u32, u32), usize) = find_best_location(&coords);
 
     println!("best: {:?}, n: {}", best_location, n_of_visible);
-    println!("");
 
-    let nth_lasered: Vec<(u32, u32)> = calculate_nth_lasered(&coords, &best_location, 99);
+    let nth_lasered: (u32, u32) = calculate_nth_lasered(&coords, &best_location, 200);
+
+    println!("nth lasered: {:?}", nth_lasered);
+
+    let (x, y) = nth_lasered;
+
+    println!("encoded coords: {:?}", x * 100 + y);
 }
 
-fn calculate_nth_lasered(
-    coords: &Vec<(u32, u32)>,
-    base_loc: &(u32, u32),
-    n: u32,
-) -> Vec<(u32, u32)> {
+fn calculate_nth_lasered(coords: &Vec<(u32, u32)>, base_loc: &(u32, u32), n: u32) -> (u32, u32) {
     let directions: Vec<((u32, u32), (i32, i32))> = list_directions(&coords, &base_loc);
     let dir_groups: Vec<Vec<((u32, u32), (i32, i32))>> = group_directions(directions);
     let ordered_dir_groups: Vec<Vec<((u32, u32), (i32, i32))>> = order_dir_groups(dir_groups);
+    let nth: (u32, u32) = get_nth(ordered_dir_groups, n);
 
-    // DEV: printout
-    for group in ordered_dir_groups {
-        println!("{:?}", group);
-        println!("");
-    }
-
-    // DEV: Default return value to prevent error.
-    vec![(3, 3)]
+    nth
 }
 
+// Repeatedly remove 1st element of vecs (in vec of vecs), by repeatedly iterating over vec of vecs,
+// also removing any empty vecs, and return coords from 1st element of nth such process.
+fn get_nth(mut ordered_dir_groups: Vec<Vec<((u32, u32), (i32, i32))>>, n: u32) -> (u32, u32) {
+    let mut count: u32 = 1;
+
+    loop {
+        let mut offset: usize = 0;
+
+        for i in 0..ordered_dir_groups.iter().count() {
+            if count == n {
+                let (loc, _) = ordered_dir_groups[i - offset][0];
+
+                return loc;
+            } else {
+                ordered_dir_groups[i - offset].remove(0);
+
+                count += 1;
+                if ordered_dir_groups[i - offset].iter().count() == 0 {
+                    ordered_dir_groups.remove(i - offset);
+                    offset += 1;
+                }
+            }
+        }
+    }
+}
+
+// Order vecs of (coords, direction vector), within wrapper vec, according to the direction vectors
+// (which should be identical within a vec). Start with due N and order by direction, clockwise.
+// Also, order the elements within vecs by distance of ccords from the base asteroid.
 fn order_dir_groups(
     dir_groups: Vec<Vec<((u32, u32), (i32, i32))>>,
 ) -> Vec<Vec<((u32, u32), (i32, i32))>> {
@@ -41,18 +65,22 @@ fn order_dir_groups(
     for group in dir_groups {
         let ((_, _), (a, b)) = group[0];
 
-        if a == 0 && b == 1 { // Due N
+        if a == 0 && b == 1 {
+            // Due N
             ordered_dir_groups.push(group.into_iter().rev().collect());
-        } else if (a < 0 && b > 0) || (a == -1 && b == 0) || (a < 0 && b < 0) { // N > group < S, ordered clockwise
+        } else if (a < 0 && b > 0) || (a == -1 && b == 0) || (a < 0 && b < 0) {
+            // N > group < S
             if a < 0 && b > 0 {
                 right.push(group.into_iter().rev().collect());
             } else {
                 right.push(group)
             }
-        } else if a == 0 && b == -1 { // Due S
+        } else if a == 0 && b == -1 {
+            // Due S
             south = group;
-        } else { // S > group < N, ordered clockwise
-            if (a > 0 && b < 0) || ( a == 1 && b == 0) {
+        } else {
+            // S > group < N
+            if (a > 0 && b > 0) || (a == 1 && b == 0) {
                 left.push(group.into_iter().rev().collect());
             } else {
                 left.push(group)
@@ -60,8 +88,8 @@ fn order_dir_groups(
         }
     }
 
-    let right_ordered: Vec<Vec<((u32, u32), (i32, i32))>> = order_ascending_dirs(right);
-    let left_ordered: Vec<Vec<((u32, u32), (i32, i32))>> = order_ascending_dirs(left);
+    let right_ordered: Vec<Vec<((u32, u32), (i32, i32))>> = order_ascending_dirs(right); // order clockwise
+    let left_ordered: Vec<Vec<((u32, u32), (i32, i32))>> = order_ascending_dirs(left); // order clockwise
 
     for group in right_ordered {
         ordered_dir_groups.push(group);
@@ -71,16 +99,21 @@ fn order_dir_groups(
 
     for group in left_ordered {
         ordered_dir_groups.push(group);
-    }    
+    }
 
     ordered_dir_groups
 }
 
-fn order_ascending_dirs(mut input: Vec<Vec<((u32, u32), (i32, i32))>>) -> Vec<Vec<((u32, u32), (i32, i32))>> {
+// Order vecs (in vec of vecs) by ascending values, b / a, for direction vectors (a, b).
+fn order_ascending_dirs(
+    mut input: Vec<Vec<((u32, u32), (i32, i32))>>,
+) -> Vec<Vec<((u32, u32), (i32, i32))>> {
     let mut ordered: Vec<Vec<((u32, u32), (i32, i32))>> = vec![];
 
     loop {
-        if input.iter().count() == 0 { break; }
+        if input.iter().count() == 0 {
+            break;
+        }
 
         let mut index: usize = 0;
         let mut lowest: f32 = 999.0;
@@ -92,7 +125,7 @@ fn order_ascending_dirs(mut input: Vec<Vec<((u32, u32), (i32, i32))>>) -> Vec<Ve
                 index = i;
             }
         }
-    
+
         ordered.push(input.swap_remove(index));
     }
 
@@ -300,5 +333,39 @@ mod tests {
         let coords = parse_coordinates(input);
         let result = find_best_location(&coords);
         assert_eq!(result, ((3, 4), 8));
+    }
+
+    #[test]
+    fn calculate_nth_lasered_test() {
+        let input = String::from(concat!(
+            ".#..##.###...#######\n",
+            "##.############..##.\n",
+            ".#.######.########.#\n",
+            ".###.#######.####.#.\n",
+            "#####.##.#.##.###.##\n",
+            "..#####..#.#########\n",
+            "####################\n",
+            "#.####....###.#.#.##\n",
+            "##.#################\n",
+            "#####.##.###..####..\n",
+            "..######..##.#######\n",
+            "####.##.####...##..#\n",
+            ".#####..#.######.###\n",
+            "##...#.##########...\n",
+            "#.##########.#######\n",
+            ".####.#.###.###.#.##\n",
+            "....##.##.###..#####\n",
+            ".#.#.###########.###\n",
+            "#.#.#.#####.####.###\n",
+            "###.##.####.##.#..##\n"
+        ));
+
+        let coords = parse_coordinates(input);
+        let (best_location, _) = find_best_location(&coords);
+        let nth_lasered: (u32, u32) = calculate_nth_lasered(&coords, &best_location, 199);
+        assert_eq!(nth_lasered, (9, 6));
+
+        let nth_lasered: (u32, u32) = calculate_nth_lasered(&coords, &best_location, 299);
+        assert_eq!(nth_lasered, (11, 1));
     }
 }
