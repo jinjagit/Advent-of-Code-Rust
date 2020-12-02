@@ -26,7 +26,7 @@ fn calculate_nth_lasered(coords: &Vec<(u32, u32)>, base_loc: &(u32, u32), n: u32
 }
 
 // Repeatedly remove 1st element of vecs (in vec of vecs), by repeatedly iterating over vec of vecs,
-// also removing any empty vecs, and return coords from 1st element of nth such process.
+// also removing any empty vecs, and return coords from 1st element of nth op.
 fn get_nth(mut ordered_dir_groups: Vec<Vec<((u32, u32), (i32, i32))>>, n: u32) -> (u32, u32) {
     let mut count: u32 = 1;
 
